@@ -98,7 +98,7 @@
         <p id="resumo-limite">R$ 0,00</p>
       </div>
       <div class="card detalhe-limite">
-        <h3 id="titulo-limite-cartao">Limite Total (Todos)</h3>
+        <h3 id="titulo-limite-cartao">Limite Disponível (Filtro)</h3>
         <p id="resumo-limite-cartao">R$ 0,00</p>
       </div>
       <div class="card atual">
@@ -115,28 +115,28 @@
       </div>
     </div>
 
-    <!-- FORMULÁRIO: CADASTRAR CARTÃO -->
+    <!-- FORMULÁRIO: CADASTRAR/EDITAR CARTÃO -->
     <div class="box">
-      <h2>+ Cadastrar Cartão de Crédito</h2>
+      <h2>+ Cadastrar ou Atualizar Limite do Cartão</h2>
       <form id="form-cartao">
         <div>
           <label>Nome do Cartão</label>
-          <input type="text" id="c-nome" placeholder="Ex: Nubank, Itaú" required>
+          <input type="text" id="c-nome" placeholder="Ex: INTER, NUBANK" required>
         </div>
         <div>
           <label>Limite Total (R$)</label>
-          <input type="number" id="c-limite" step="0.01" placeholder="Ex: 3000.00" required>
+          <input type="number" id="c-limite" step="0.01" placeholder="Ex: 10790.00" required>
         </div>
         <div>
           <label>Dia Fechamento</label>
-          <input type="number" id="c-fechamento" min="1" max="31" placeholder="Ex: 25" required>
+          <input type="number" id="c-fechamento" min="1" max="31" placeholder="Ex: 22" required>
         </div>
         <div>
           <label>Dia Vencimento</label>
-          <input type="number" id="c-vencimento" min="1" max="31" placeholder="Ex: 5" required>
+          <input type="number" id="c-vencimento" min="1" max="31" placeholder="Ex: 28" required>
         </div>
         <div class="full-width">
-          <button type="submit" class="btn-blue">Salvar Novo Cartão</button>
+          <button type="submit" class="btn-blue">Salvar / Atualizar Cartão</button>
         </div>
       </form>
     </div>
@@ -264,24 +264,32 @@
     const mesAnoAtualStr = `${hojePadrao.getFullYear()}-${String(hojePadrao.getMonth() + 1).padStart(2, '0')}`;
     document.getElementById('t-primeiro-vencimento').value = mesAnoAtualStr;
 
-    // CADASTRAR CARTÃO
+    // CADASTRAR OU ATUALIZAR CARTÃO
     document.getElementById('form-cartao').addEventListener('submit', async (e) => {
       e.preventDefault();
-      const nome = document.getElementById('c-nome').value;
+      const nome = document.getElementById('c-nome').value.toUpperCase();
       const limite = parseFloat(document.getElementById('c-limite').value);
       const fechamento = parseInt(document.getElementById('c-fechamento').value);
       const vencimento = parseInt(document.getElementById('c-vencimento').value);
 
-      const { error } = await supabaseClient.from('cartoes').insert([{
-        nome, limite, dia_fechamento: fechamento, dia_vencimento: vencimento
-      }]);
+      const { data: existente } = await supabaseClient.from('cartoes').select('*').eq('nome', nome).single();
 
-      if (error) alert('Erro ao cadastrar cartão: ' + error.message);
-      else {
-        alert('Cartão cadastrado com sucesso!');
-        document.getElementById('form-cartao').reset();
-        carregarCartoes();
+      if (existente) {
+        const { error } = await supabaseClient.from('cartoes').update({
+          limite, dia_fechamento: fechamento, dia_vencimento: vencimento
+        }).eq('id', existente.id);
+        if (error) alert('Erro ao atualizar cartão: ' + error.message);
+        else alert('Limite e dados do cartão atualizados com sucesso!');
+      } else {
+        const { error } = await supabaseClient.from('cartoes').insert([{
+          nome, limite, dia_fechamento: fechamento, dia_vencimento: vencimento
+        }]);
+        if (error) alert('Erro ao cadastrar cartão: ' + error.message);
+        else alert('Cartão cadastrado com sucesso!');
       }
+
+      document.getElementById('form-cartao').reset();
+      carregarCartoes();
     });
 
     // CARREGAR CARTÕES
@@ -291,6 +299,8 @@
       const selectFiltro = document.getElementById('filtro-cartao');
       const selectEditCartao = document.getElementById('edit-cartao');
       
+      const valorFiltroAtual = selectFiltro.value || 'TODOS';
+
       selectCompra.innerHTML = '<option value="">Selecione...</option>';
       selectFiltro.innerHTML = '<option value="TODOS">Todos os Cartões</option>';
       selectEditCartao.innerHTML = '';
@@ -302,6 +312,7 @@
           selectEditCartao.innerHTML += `<option value="${c.nome}">${c.nome}</option>`;
         });
       }
+      selectFiltro.value = valorFiltroAtual;
       carregarDados();
     }
 
@@ -350,14 +361,11 @@
       }
     });
 
-    // CARREGAR DADOS E PROJEÇÃO DOS PRÓXIMOS 6 MESES
+    // CARREGAR DADOS E CALCULAR LIMITES
     async function carregarDados() {
       const filtro = document.getElementById('filtro-cartao').value;
-      let query = supabaseClient.from('transacoes').select('*');
-      
-      if (filtro && filtro !== 'TODOS') query = query.eq('Cartao', filtro);
 
-      const { data: transacoes } = await query.order('Vencimento', { ascending: true });
+      const { data: todasTransacoes } = await supabaseClient.from('transacoes').select('*').order('Vencimento', { ascending: true });
       const { data: cartoes } = await supabaseClient.from('cartoes').select('*');
 
       const tbody = document.getElementById('tabela-corpo');
@@ -365,8 +373,9 @@
 
       let limiteGlobal = 0;
       let limiteFiltroCartao = 0;
+      let pendenteGlobal = 0;
+      let pendenteFiltroCartao = 0;
       let faturaAtual = 0;
-      let pendenteTotalGeral = 0;
 
       if (cartoes) {
         cartoes.forEach(c => {
@@ -379,7 +388,7 @@
       const mesAtualIdx = hoje.getMonth();
       const anoAtualIdx = hoje.getFullYear();
 
-      // Estrutura para os próximos 6 meses + excedente
+      // Próximos 6 meses
       let projecaoMeses = [];
       for (let i = 1; i <= 6; i++) {
         let d = new Date(anoAtualIdx, mesAtualIdx + i, 1);
@@ -392,46 +401,53 @@
       }
       let valorExcedente = 0;
 
-      if (transacoes) {
-        transacoes.forEach(t => {
+      if (todasTransacoes) {
+        todasTransacoes.forEach(t => {
           const dtVenc = new Date((t.Vencimento || t.Data) + 'T00:00:00');
           const isPago = t.Status;
+          const pertenceAoFiltro = (filtro === 'TODOS' || t.Cartao === filtro);
 
           if (!isPago) {
-            pendenteTotalGeral += t.Valor;
-            
-            if (dtVenc.getMonth() === mesAtualIdx && dtVenc.getFullYear() === anoAtualIdx) {
-              faturaAtual += t.Valor;
-            } else if (dtVenc > hoje) {
-              // Verifica se cai nos próximos 6 meses
-              let somado = false;
-              projecaoMeses.forEach(m => {
-                if (dtVenc.getMonth() === m.mes && dtVenc.getFullYear() === m.ano) {
-                  m.valor += t.Valor;
-                  somado = true;
+            pendenteGlobal += t.Valor;
+            if (pertenceAoFiltro) {
+              pendenteFiltroCartao += t.Valor;
+            }
+
+            if (pertenceAoFiltro) {
+              if (dtVenc.getMonth() === mesAtualIdx && dtVenc.getFullYear() === anoAtualIdx) {
+                faturaAtual += t.Valor;
+              } else if (dtVenc > hoje) {
+                let somado = false;
+                projecaoMeses.forEach(m => {
+                  if (dtVenc.getMonth() === m.mes && dtVenc.getFullYear() === m.ano) {
+                    m.valor += t.Valor;
+                    somado = true;
+                  }
+                });
+                if (!somado && dtVenc > new Date(projecaoMeses[5].ano, projecaoMeses[5].mes, 31)) {
+                  valorExcedente += t.Valor;
                 }
-              });
-              if (!somado && dtVenc > new Date(projecaoMeses[5].ano, projecaoMeses[5].mes, 31)) {
-                valorExcedente += t.Valor;
               }
             }
           }
 
-          tbody.innerHTML += `
-            <tr>
-              <td>${t.Data ? t.Data.split('-').reverse().join('/') : '-'}</td>
-              <td>${t.Descricao}</td>
-              <td><strong>${t.Cartao}</strong></td>
-              <td>${t.Parcelas || 1}x</td>
-              <td>${t.Vencimento ? t.Vencimento.split('-').reverse().join('/') : '-'}</td>
-              <td>${t.Valor ? t.Valor.toLocaleString('pt-BR', {style:'currency', currency:'BRL'}) : 'R$ 0,00'}</td>
-              <td><span class="badge ${isPago ? 'badge-pago' : 'badge-pendente'}">${isPago ? 'PAGO' : 'PENDENTE'}</span></td>
-              <td>
-                <button class="btn-edit" onclick='abrirModalEdit(${JSON.stringify(t)})'>✏️ Editar</button>
-                <button class="btn-delete" onclick="excluirTransacao(${t.id})">🗑️ Excluir</button>
-              </td>
-            </tr>
-          `;
+          if (pertenceAoFiltro) {
+            tbody.innerHTML += `
+              <tr>
+                <td>${t.Data ? t.Data.split('-').reverse().join('/') : '-'}</td>
+                <td>${t.Descricao}</td>
+                <td><strong>${t.Cartao}</strong></td>
+                <td>${t.Parcelas || 1}x</td>
+                <td>${t.Vencimento ? t.Vencimento.split('-').reverse().join('/') : '-'}</td>
+                <td>${t.Valor ? t.Valor.toLocaleString('pt-BR', {style:'currency', currency:'BRL'}) : 'R$ 0,00'}</td>
+                <td><span class="badge ${isPago ? 'badge-pago' : 'badge-pendente'}">${isPago ? 'PAGO' : 'PENDENTE'}</span></td>
+                <td>
+                  <button class="btn-edit" onclick='abrirModalEdit(${JSON.stringify(t)})'>✏️ Editar</button>
+                  <button class="btn-delete" onclick="excluirTransacao(${t.id})">🗑️ Excluir</button>
+                </td>
+              </tr>
+            `;
+          }
         });
       }
 
@@ -453,18 +469,18 @@
         </div>
       `;
 
-      // Atualizar Resumos
-      const limiteDisponivelGlobal = Math.max(0, limiteGlobal - pendenteTotalGeral);
+      // Resumos Financeiros
+      const limiteDisponivelGlobal = Math.max(0, limiteGlobal - pendenteGlobal);
       document.getElementById('resumo-limite').textContent = limiteDisponivelGlobal.toLocaleString('pt-BR', {style:'currency', currency:'BRL'});
       document.getElementById('resumo-fatura-atual').textContent = faturaAtual.toLocaleString('pt-BR', {style:'currency', currency:'BRL'});
 
       if (filtro && filtro !== 'TODOS') {
-        const disponivelCartao = Math.max(0, limiteFiltroCartao - pendenteTotalGeral);
+        const disponivelCartao = Math.max(0, limiteFiltroCartao - pendenteFiltroCartao);
         document.getElementById('titulo-limite-cartao').textContent = `Limite Disponível (${filtro})`;
         document.getElementById('resumo-limite-cartao').textContent = disponivelCartao.toLocaleString('pt-BR', {style:'currency', currency:'BRL'});
       } else {
-        document.getElementById('titulo-limite-cartao').textContent = 'Limite Total (Todos Cartões)';
-        document.getElementById('resumo-limite-cartao').textContent = limiteGlobal.toLocaleString('pt-BR', {style:'currency', currency:'BRL'});
+        document.getElementById('titulo-limite-cartao').textContent = 'Limite Disponível (Todos)';
+        document.getElementById('resumo-limite-cartao').textContent = limiteDisponivelGlobal.toLocaleString('pt-BR', {style:'currency', currency:'BRL'});
       }
     }
 
