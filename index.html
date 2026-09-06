@@ -53,7 +53,9 @@
     .btn-green:hover { background-color: var(--accent-green-hover); }
     .btn-blue { background-color: var(--accent-blue); color: #ffffff; font-weight: 600; border: none; cursor: pointer; }
     .btn-blue:hover { background-color: var(--accent-blue-hover); }
-    
+    .btn-delete { background-color: rgba(239, 68, 68, 0.2); color: var(--accent-red); border: 1px solid rgba(239, 68, 68, 0.4); padding: 6px 10px; border-radius: 6px; cursor: pointer; font-size: 0.85em; width: auto; }
+    .btn-delete:hover { background-color: var(--accent-red); color: #fff; }
+
     /* BARRA DE FILTRO E AÇÕES */
     .fatura-actions { display: flex; gap: 15px; align-items: flex-end; justify-content: space-between; background: rgba(255, 255, 255, 0.03); padding: 16px; border-radius: 10px; border: 1px solid var(--card-border); margin-bottom: 20px; flex-wrap: wrap; }
     .fatura-actions select { min-width: 200px; }
@@ -78,14 +80,14 @@
   <div class="container">
     <h1>💳 Dashboard Financeiro de Cartões</h1>
 
-    <!-- CARDS DE RESUMO (Sempre Visíveis) -->
+    <!-- CARDS DE RESUMO -->
     <div class="cards-grid">
       <div class="card limite">
         <h3>Limite Disponível Global</h3>
         <p id="resumo-limite">R$ 0,00</p>
       </div>
       <div class="card detalhe-limite">
-        <h3 id="titulo-limite-cartao">Limite Total do Cartão</h3>
+        <h3 id="titulo-limite-cartao">Limite Total (Todos)</h3>
         <p id="resumo-limite-cartao">R$ 0,00</p>
       </div>
       <div class="card atual">
@@ -130,7 +132,7 @@
       <form id="form-compra">
         <div>
           <label>Descrição</label>
-          <input type="text" id="t-descricao" placeholder="Ex: Mercado, Posto de Gasolina" required>
+          <input type="text" id="t-descricao" placeholder="Ex: Mercado, Notebook" required>
         </div>
         <div>
           <label>Valor Total (R$)</label>
@@ -149,6 +151,10 @@
         <div>
           <label>Nº de Parcelas</label>
           <input type="number" id="t-parcelas" value="1" min="1" required>
+        </div>
+        <div>
+          <label>Primeiro Vencimento (Mês/Ano)</label>
+          <input type="month" id="t-primeiro-vencimento" required>
         </div>
         <div class="full-width">
           <button type="submit" class="btn-green">Lançar Compra Inteligente</button>
@@ -181,10 +187,11 @@
               <th>Venc. Fatura</th>
               <th>Valor Parcela</th>
               <th>Status</th>
+              <th>Ação</th>
             </tr>
           </thead>
           <tbody id="tabela-corpo">
-            <tr><td colspan="7" style="text-align:center; color: var(--text-muted);">Carregando dados...</td></tr>
+            <tr><td colspan="8" style="text-align:center; color: var(--text-muted);">Carregando dados...</td></tr>
           </tbody>
         </table>
       </div>
@@ -196,7 +203,11 @@
     const SUPABASE_KEY = 'sb_publishable_8-eWESul1nNUDuFz6P1S9w_BlJDLu-i';
     const supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
 
-    document.getElementById('t-data').valueAsDate = new Date();
+    // Inicializar datas no formulário
+    const hojePadrao = new Date();
+    document.getElementById('t-data').valueAsDate = hojePadrao;
+    const mesAnoAtualStr = `${hojePadrao.getFullYear()}-${String(hojePadrao.getMonth() + 1).padStart(2, '0')}`;
+    document.getElementById('t-primeiro-vencimento').value = mesAnoAtualStr;
 
     // CADASTRAR CARTÃO
     document.getElementById('form-cartao').addEventListener('submit', async (e) => {
@@ -236,38 +247,39 @@
       carregarDados();
     }
 
-    // LANÇAR COMPRA PARCELADA AUTOMÁTICA
+    // LANÇAR COMPRA
     document.getElementById('form-compra').addEventListener('submit', async (e) => {
       e.preventDefault();
       const descricao = document.getElementById('t-descricao').value;
       const valorTotal = parseFloat(document.getElementById('t-valor').value);
       const dataCompraStr = document.getElementById('t-data').value;
-      const dataCompra = new Date(dataCompraStr + 'T00:00:00');
       const nomeCartao = document.getElementById('t-cartao').value;
       const totalParcelas = parseInt(document.getElementById('t-parcelas').value);
+      const primeiroVencStr = document.getElementById('t-primeiro-vencimento').value; // Formato "YYYY-MM"
+
+      const [anoInicio, mesInicio] = primeiroVencStr.split('-').map(Number);
 
       const { data: cartaoData } = await supabaseClient.from('cartoes').select('*').eq('nome', nomeCartao).single();
-      
+      const diaVenc = cartaoData ? cartaoData.dia_vencimento : 5;
+
       const valorParcela = valorTotal / totalParcelas;
       let lancamentos = [];
 
       for (let i = 0; i < totalParcelas; i++) {
-        let dataVenc = new Date(dataCompra);
-        let mesAdicional = i;
-        
-        // Se a compra foi feita no dia de fechamento ou depois, vai para o mês seguinte
-        if (cartaoData && dataCompra.getDate() >= cartaoData.dia_fechamento) {
-          mesAdicional += 1;
-        }
+        // Criar data da fatura baseada no mês/ano escolhido
+        let dataVenc = new Date(anoInicio, (mesInicio - 1) + i, diaVenc);
 
-        dataVenc.setMonth(dataVenc.getMonth() + mesAdicional);
-        if (cartaoData) dataVenc.setDate(cartaoData.dia_vencimento);
+        // Formatando YYYY-MM-DD
+        const ano = dataVenc.getFullYear();
+        const mes = String(dataVenc.getMonth() + 1).padStart(2, '0');
+        const dia = String(dataVenc.getDate()).padStart(2, '0');
+        const vencimentoFormatado = `${ano}-${mes}-${dia}`;
 
         lancamentos.push({
           Descricao: `${descricao} (${i + 1}/${totalParcelas})`,
           Valor: valorParcela,
           Data: dataCompraStr,
-          Vencimento: dataVenc.toISOString().split('T')[0],
+          Vencimento: vencimentoFormatado,
           Cartao: nomeCartao,
           Parcelas: totalParcelas,
           Status: false
@@ -277,14 +289,15 @@
       const { error } = await supabaseClient.from('transacoes').insert(lancamentos);
       if (error) alert('Erro ao salvar compras: ' + error.message);
       else {
-        alert('Compra lançada e faturas distribuídas!');
+        alert('Compra lançada com sucesso!');
         document.getElementById('form-compra').reset();
         document.getElementById('t-data').valueAsDate = new Date();
+        document.getElementById('t-primeiro-vencimento').value = mesAnoAtualStr;
         carregarDados();
       }
     });
 
-    // CARREGAR DADOS E CALCULAR RESUMOS E LIMITES POR FILTRO
+    // CARREGAR DADOS E CALCULAR RESUMOS E LIMITES
     async function carregarDados() {
       const filtro = document.getElementById('filtro-cartao').value;
       let query = supabaseClient.from('transacoes').select('*');
@@ -339,19 +352,18 @@
               <td>${t.Vencimento ? t.Vencimento.split('-').reverse().join('/') : '-'}</td>
               <td>${t.Valor ? t.Valor.toLocaleString('pt-BR', {style:'currency', currency:'BRL'}) : 'R$ 0,00'}</td>
               <td><span class="badge ${isPago ? 'badge-pago' : 'badge-pendente'}">${isPago ? 'PAGO' : 'PENDENTE'}</span></td>
+              <td><button class="btn-delete" onclick="excluirTransacao(${t.id})">🗑️ Excluir</button></td>
             </tr>
           `;
         });
       }
 
-      // Atualização dos Cards de Resumo
       const limiteDisponivelGlobal = Math.max(0, limiteGlobal - pendenteTotalGeral);
       
       document.getElementById('resumo-limite').textContent = limiteDisponivelGlobal.toLocaleString('pt-BR', {style:'currency', currency:'BRL'});
       document.getElementById('resumo-fatura-atual').textContent = faturaAtual.toLocaleString('pt-BR', {style:'currency', currency:'BRL'});
       document.getElementById('resumo-faturas-futuras').textContent = faturaFutura.toLocaleString('pt-BR', {style:'currency', currency:'BRL'});
 
-      // Card Específico do Cartão Selecionado
       if (filtro && filtro !== 'TODOS') {
         const disponivelCartao = Math.max(0, limiteFiltroCartao - pendenteTotalGeral);
         document.getElementById('titulo-limite-cartao').textContent = `Limite Disponível (${filtro})`;
@@ -359,6 +371,17 @@
       } else {
         document.getElementById('titulo-limite-cartao').textContent = 'Limite Total (Todos Cartões)';
         document.getElementById('resumo-limite-cartao').textContent = limiteGlobal.toLocaleString('pt-BR', {style:'currency', currency:'BRL'});
+      }
+    }
+
+    // EXCLUIR TRANSAÇÃO
+    async function excluirTransacao(id) {
+      if (confirm('Tem certeza que deseja apagar essa parcela/lançamento?')) {
+        const { error } = await supabaseClient.from('transacoes').delete().eq('id', id);
+        if (error) alert('Erro ao excluir: ' + error.message);
+        else {
+          carregarDados();
+        }
       }
     }
 
