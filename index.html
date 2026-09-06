@@ -64,7 +64,7 @@
     .btn-clone:hover { background: var(--accent-yellow); color: #fff; }
 
     /* FILTROS E BARRAS DE AÇÃO */
-    .filters-bar { display: grid; grid-template-columns: repeat(auto-fit, minmax(160px, 1fr)); gap: 12px; background: rgba(255, 255, 255, 0.02); padding: 16px; border-radius: 10px; border: 1px solid var(--card-border); margin-bottom: 15px; align-items: end; }
+    .filters-bar { display: grid; grid-template-columns: repeat(auto-fit, minmax(140px, 1fr)); gap: 12px; background: rgba(255, 255, 255, 0.02); padding: 16px; border-radius: 10px; border: 1px solid var(--card-border); margin-bottom: 15px; align-items: end; }
     .selection-bar { display: flex; justify-content: space-between; align-items: center; background: rgba(59, 130, 246, 0.1); border: 1px solid rgba(59, 130, 246, 0.3); padding: 12px 18px; border-radius: 8px; margin-bottom: 15px; flex-wrap: wrap; gap: 10px; }
     .selection-info { font-weight: 600; color: var(--accent-blue); font-size: 0.95em; }
 
@@ -81,12 +81,13 @@
     .badge { padding: 3px 8px; border-radius: 12px; font-size: 0.75em; font-weight: 700; text-transform: uppercase; }
     .badge-pago { background: rgba(16, 185, 129, 0.15); color: var(--accent-green); border: 1px solid rgba(16, 185, 129, 0.3); }
     .badge-pendente { background: rgba(239, 68, 68, 0.15); color: var(--accent-red); border: 1px solid rgba(239, 68, 68, 0.3); }
+    
     .badge-tipo-cartao { background: rgba(59, 130, 246, 0.15); color: var(--accent-blue); border: 1px solid rgba(59, 130, 246, 0.3); }
     .badge-tipo-fixa { background: rgba(139, 92, 246, 0.15); color: var(--accent-purple); border: 1px solid rgba(139, 92, 246, 0.3); }
 
     /* MODAL */
     .modal-overlay { position: fixed; top:0; left:0; width:100%; height:100%; background: rgba(0,0,0,0.7); display:none; justify-content:center; align-items:center; z-index:1000; }
-    .modal { background: var(--card-bg); padding: 25px; border-radius: 12px; border: 1px solid var(--card-border); width: 90%; max-width: 500px; }
+    .modal { background: var(--card-bg); padding: 25px; border-radius: 12px; border: 1px solid var(--card-border); width: 90%; max-width: 600px; max-height: 90vh; overflow-y: auto; }
   </style>
 
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
@@ -94,7 +95,7 @@
 <body>
 
   <div class="container">
-    <h1>💳 Painel Financeiro & Cartões</h1>
+    <h1>💳 Painel Financeiro & Contas</h1>
 
     <!-- PAINEL RESUMO DE CARTÕES E LIMITES -->
     <div class="box">
@@ -104,15 +105,15 @@
       </div>
     </div>
 
-    <!-- FORMULÁRIO: NOVA COMPRA -->
+    <!-- FORMULÁRIO: NOVA COMPRA / CONTA -->
     <div class="box">
       <h2>+ Lançar Nova Compra / Conta</h2>
       <form id="form-compra">
         <div>
-          <label>Tipo de Lançamento</label>
-          <select id="t-tipo" onchange="alterarTipoLancamento(this.value)" required>
-            <option value="CARTAO">Cartão de Crédito</option>
-            <option value="CONTA_FIXA">Conta Fixa (Água, Luz, Net...)</option>
+          <label>Tipo de Despesa</label>
+          <select id="t-tipo" required>
+            <option value="Cartão">💳 Compra no Cartão</option>
+            <option value="Conta Fixa">🏠 Conta Fixa / Boleto / Pix</option>
           </select>
         </div>
         <div>
@@ -127,36 +128,37 @@
           <label>Data da Compra / Emissão</label>
           <input type="date" id="t-data" required>
         </div>
-        <div id="campo-cartao-container">
+        <div>
           <label>Cartão / Forma de Pagamento</label>
           <select id="t-cartao"></select>
+          <small style="font-size: 0.7em; color: var(--text-muted);">Pode deixar vazio se for dinheiro/PIX</small>
         </div>
-        <div id="campo-parcelas-container">
+        <div>
           <label>Nº de Parcelas</label>
           <input type="number" id="t-parcelas" value="1" min="1" required>
         </div>
         <div>
-          <label>Mês da 1ª Fatura / Vencimento</label>
+          <label>Mês Vencimento (1ª Parcela)</label>
           <input type="month" id="t-primeiro-vencimento" required>
         </div>
         <div class="full-width">
-          <button type="submit" class="btn-green">➕ Lançar Compra / Parcela</button>
+          <button type="submit" class="btn-green">➕ Lançar Compra / Conta</button>
         </div>
       </form>
     </div>
 
     <!-- TABELA E GESTÃO DE LANÇAMENTOS -->
     <div class="box">
-      <h2>📋 Detalhamento de Faturas e Compras</h2>
+      <h2>📋 Detalhamento de Faturas e Contas</h2>
 
       <!-- PAINEL DE FILTROS -->
       <div class="filters-bar">
         <div>
           <label>Tipo:</label>
           <select id="f-tipo" onchange="aplicarFiltros()">
-            <option value="TODOS">Todos os Tipos</option>
-            <option value="CARTAO">Cartão de Crédito</option>
-            <option value="CONTA_FIXA">Contas Fixas</option>
+            <option value="TODOS">Todos</option>
+            <option value="Cartão">Apenas Cartões</option>
+            <option value="Conta Fixa">Apenas Contas Fixas</option>
           </select>
         </div>
         <div>
@@ -176,7 +178,7 @@
           </select>
         </div>
         <div>
-          <button type="button" class="btn-secondary" onclick="limparFiltros()">🧹 Limpar Filtros</button>
+          <button type="button" class="btn-secondary" onclick="limparFiltros()">🧹 Limpar</button>
         </div>
       </div>
 
@@ -198,9 +200,9 @@
               <th onclick="ordenarTabela('Tipo')">Tipo ↕</th>
               <th onclick="ordenarTabela('Data')">Data ↕</th>
               <th onclick="ordenarTabela('Descricao')">Descrição ↕</th>
-              <th onclick="ordenarTabela('Cartao')">Cartão / Origem ↕</th>
+              <th onclick="ordenarTabela('Cartao')">Forma Pagto ↕</th>
               <th onclick="ordenarTabela('Parcelas')">Parc. ↕</th>
-              <th onclick="ordenarTabela('Vencimento')">Venc. Fatura ↕</th>
+              <th onclick="ordenarTabela('Vencimento')">Vencimento ↕</th>
               <th onclick="ordenarTabela('Valor')">Valor ↕</th>
               <th onclick="ordenarTabela('Status')">Status ↕</th>
               <th>Ações</th>
@@ -213,7 +215,7 @@
       </div>
     </div>
 
-    <!-- FORMULÁRIO: CADASTRAR/EDITAR CARTÃO -->
+    <!-- FORMULÁRIO: CADASTRAR/EDITAR CARTÃO (NO FINAL) -->
     <div class="box">
       <h2>⚙️ Cadastrar ou Atualizar Limite de Cartão</h2>
       <form id="form-cartao">
@@ -250,8 +252,8 @@
         <div>
           <label>Tipo</label>
           <select id="edit-tipo" required>
-            <option value="CARTAO">Cartão de Crédito</option>
-            <option value="CONTA_FIXA">Conta Fixa</option>
+            <option value="Cartão">Cartão</option>
+            <option value="Conta Fixa">Conta Fixa</option>
           </select>
         </div>
         <div>
@@ -263,7 +265,7 @@
           <input type="number" id="edit-valor" step="0.01" required>
         </div>
         <div>
-          <label>Data da Compra</label>
+          <label>Data da Compra / Emissão</label>
           <input type="date" id="edit-data" required>
         </div>
         <div>
@@ -271,7 +273,7 @@
           <input type="date" id="edit-vencimento" required>
         </div>
         <div>
-          <label>Cartão</label>
+          <label>Forma Pagamento / Cartão</label>
           <select id="edit-cartao"></select>
         </div>
         <div>
@@ -310,24 +312,6 @@
       await carregarTransacoes();
     }
 
-    // ALTERAR MODO ENTRE CARTÃO E CONTA FIXA NO FORMULÁRIO
-    function alterarTipoLancamento(tipo) {
-      const containerCartao = document.getElementById('campo-cartao-container');
-      const containerParcelas = document.getElementById('campo-parcelas-container');
-      const selectCartao = document.getElementById('t-cartao');
-
-      if (tipo === 'CONTA_FIXA') {
-        containerCartao.style.display = 'none';
-        selectCartao.removeAttribute('required');
-        document.getElementById('t-parcelas').value = 1;
-        containerParcelas.style.display = 'none';
-      } else {
-        containerCartao.style.display = 'block';
-        selectCartao.setAttribute('required', 'true');
-        containerParcelas.style.display = 'block';
-      }
-    }
-
     // CARREGAR CARTÕES
     async function carregarCartoes() {
       const { data } = await supabaseClient.from('cartoes').select('*');
@@ -337,9 +321,9 @@
       const selectFiltro = document.getElementById('f-cartao');
       const selectEdit = document.getElementById('edit-cartao');
 
-      selectCompra.innerHTML = '<option value="">Selecione...</option>';
-      selectFiltro.innerHTML = '<option value="TODOS">Todos os Cartões</option>';
-      selectEdit.innerHTML = '<option value="">Sem Cartão (Conta Fixa)</option>';
+      selectCompra.innerHTML = '<option value="">Sem Cartão (Boleto/Pix)</option>';
+      selectFiltro.innerHTML = '<option value="TODOS">Todos os Cartões/Formas</option><option value="">Sem Cartão</option>';
+      selectEdit.innerHTML = '<option value="">Sem Cartão (Boleto/Pix)</option>';
 
       dadosGlobaisCartoes.forEach(c => {
         selectCompra.innerHTML += `<option value="${c.nome}">${c.nome}</option>`;
@@ -356,7 +340,7 @@
       aplicarFiltros();
     }
 
-    // RENDERIZAR CARDS DOS CARTÕES (Ignora Contas Fixas no abate de limite)
+    // RENDERIZAR CARDS DOS CARTÕES
     function renderizarPainelCartoes() {
       const container = document.getElementById('container-cartoes-resumo');
       container.innerHTML = '';
@@ -364,12 +348,8 @@
       const diaHoje = hoje.getDate();
 
       dadosGlobaisCartoes.forEach(c => {
-        // Apenas transações do tipo CARTAO afetam o limite
-        const transacoesDoCartao = dadosGlobaisTransacoes.filter(t => 
-          t.Cartao === c.nome && 
-          !t.Status && 
-          (t.Tipo === 'CARTAO' || !t.Tipo)
-        );
+        // MUITO IMPORTANTE: Exclui da conta do limite os lançamentos classificados como "Conta Fixa"
+        const transacoesDoCartao = dadosGlobaisTransacoes.filter(t => t.Cartao === c.nome && !t.Status && t.Tipo !== 'Conta Fixa');
         
         const totalPendente = transacoesDoCartao.reduce((acc, cur) => acc + (cur.Valor || 0), 0);
         const disponivel = Math.max(0, c.limite - totalPendente);
@@ -399,9 +379,13 @@
       const filtroStatus = document.getElementById('f-status').value;
 
       let resultado = dadosGlobaisTransacoes.filter(t => {
-        const tipoItem = t.Tipo || 'CARTAO';
-        const matchTipo = (filtroTipo === 'TODOS' || tipoItem === filtroTipo);
-        const matchCartao = (filtroCartao === 'TODOS' || t.Cartao === filtroCartao);
+        const tipoT = t.Tipo || 'Cartão'; // fallback caso haja antigos sem tipo
+        const matchTipo = (filtroTipo === 'TODOS' || tipoT === filtroTipo);
+        
+        // Match cartão lida com o caso de estarem vazios (Sem Cartão)
+        const cartaoT = t.Cartao || '';
+        const matchCartao = (filtroCartao === 'TODOS' || cartaoT === filtroCartao);
+        
         const matchStatus = (filtroStatus === 'TODOS') || 
                             (filtroStatus === 'PENDENTE' && !t.Status) || 
                             (filtroStatus === 'PAGO' && t.Status);
@@ -438,4 +422,250 @@
       let somaTotalTela = 0;
 
       if (lista.length === 0) {
-        tbody.innerHTML = '<tr><td colspan="10"
+        tbody.innerHTML = '<tr><td colspan="10" style="text-align:center; color: var(--text-muted);">Nenhum lançamento encontrado.</td></tr>';
+      } else {
+        lista.forEach(t => {
+          somaTotalTela += (t.Valor || 0);
+          const tipoFinal = t.Tipo || 'Cartão';
+          const badgeTipo = tipoFinal === 'Conta Fixa' ? 'badge-tipo-fixa' : 'badge-tipo-cartao';
+          
+          tbody.innerHTML += `
+            <tr>
+              <td><input type="checkbox" class="chk-item" data-id="${t.id}" data-valor="${t.Valor}" onchange="atualizarContadorSelecao()"></td>
+              <td><span class="badge ${badgeTipo}">${tipoFinal}</span></td>
+              <td>${t.Data ? t.Data.split('-').reverse().join('/') : '-'}</td>
+              <td>${t.Descricao}</td>
+              <td><strong>${t.Cartao || '-'}</strong></td>
+              <td>${t.Parcelas || 1}x</td>
+              <td>${t.Vencimento ? t.Vencimento.split('-').reverse().join('/') : '-'}</td>
+              <td><strong>${t.Valor ? t.Valor.toLocaleString('pt-BR', {style:'currency', currency:'BRL'}) : 'R$ 0,00'}</strong></td>
+              <td><span class="badge ${t.Status ? 'badge-pago' : 'badge-pendente'}">${t.Status ? 'PAGO' : 'PENDENTE'}</span></td>
+              <td>
+                <button class="btn-action btn-edit" onclick='abrirModalEdit(${JSON.stringify(t)})' title="Editar">✏️</button>
+                <button class="btn-action btn-clone" onclick='duplicarLancamento(${JSON.stringify(t)})' title="Duplicar">📋</button>
+                <button class="btn-action btn-delete" onclick="excluirTransacao(${t.id})" title="Excluir">🗑️</button>
+              </td>
+            </tr>
+          `;
+        });
+      }
+
+      document.getElementById('txt-total-exibido').textContent = `Total exibido na tela: ${somaTotalTela.toLocaleString('pt-BR', {style:'currency', currency:'BRL'})}`;
+      atualizarContadorSelecao();
+    }
+
+    // CONTADOR DE SELEÇÃO EM TEMPO REAL
+    function atualizarContadorSelecao() {
+      const checkboxes = document.querySelectorAll('.chk-item:checked');
+      let qtd = checkboxes.length;
+      let soma = 0;
+
+      checkboxes.forEach(chk => {
+        soma += parseFloat(chk.getAttribute('data-valor') || 0);
+      });
+
+      document.getElementById('txt-contador-selecao').textContent = `${qtd} itens marcados (${soma.toLocaleString('pt-BR', {style:'currency', currency:'BRL'})})`;
+    }
+
+    function marcarTodosCheckboxes(master) {
+      const checkboxes = document.querySelectorAll('.chk-item');
+      checkboxes.forEach(chk => chk.checked = master.checked);
+      atualizarContadorSelecao();
+    }
+
+    // PAGAR ITENS SELECIONADOS VIA CHECKBOX
+    async function pagarItensSelecionados() {
+      const checkboxes = document.querySelectorAll('.chk-item:checked');
+      if (checkboxes.length === 0) {
+        alert('Selecione ao menos um item marcando a caixinha ao lado para pagar.');
+        return;
+      }
+
+      let ids = [];
+      let total = 0;
+      checkboxes.forEach(chk => {
+        ids.push(parseInt(chk.getAttribute('data-id')));
+        total += parseFloat(chk.getAttribute('data-valor') || 0);
+      });
+
+      const confirmou = confirm(`⚠️ Confirmar Pagamento?\n\nVocê selecionou ${ids.length} compra(s)\nValor Total: ${total.toLocaleString('pt-BR', {style:'currency', currency:'BRL'})}\n\nDeseja alterar o status para PAGO?`);
+
+      if (confirmou) {
+        const { error } = await supabaseClient
+          .from('transacoes')
+          .update({ Status: true })
+          .in('id', ids);
+
+        if (error) alert('Erro ao atualizar: ' + error.message);
+        else {
+          alert('Pagamento registrado com sucesso!');
+          document.getElementById('chk-marcar-todos').checked = false;
+          carregarTransacoes();
+        }
+      }
+    }
+
+    // LIMPAR FILTROS
+    function limparFiltros() {
+      document.getElementById('f-tipo').value = 'TODOS';
+      document.getElementById('f-cartao').value = 'TODOS';
+      document.getElementById('f-mes').value = '';
+      document.getElementById('f-status').value = 'TODOS';
+      aplicarFiltros();
+    }
+
+    // ORDENAR COLUNAS
+    function ordenarTabela(coluna) {
+      if (ordenacaoAtual.coluna === coluna) {
+        ordenacaoAtual.ascendente = !ordenacaoAtual.ascendente;
+      } else {
+        ordenacaoAtual.coluna = coluna;
+        ordenacaoAtual.ascendente = true;
+      }
+      aplicarFiltros();
+    }
+
+    // DUPLICAR LANÇAMENTO
+    function duplicarLancamento(t) {
+      document.getElementById('t-tipo').value = t.Tipo || 'Cartão';
+      document.getElementById('t-descricao').value = t.Descricao + ' (Cópia)';
+      document.getElementById('t-valor').value = t.Valor;
+      document.getElementById('t-cartao').value = t.Cartao || '';
+      document.getElementById('t-parcelas').value = 1;
+      window.scrollTo({ top: 300, behavior: 'smooth' });
+    }
+
+    // CADASTRAR NOVA COMPRA / CONTA
+    document.getElementById('form-compra').addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const tipo = document.getElementById('t-tipo').value;
+      const descricao = document.getElementById('t-descricao').value;
+      const valorTotal = parseFloat(document.getElementById('t-valor').value);
+      const dataCompraStr = document.getElementById('t-data').value;
+      const nomeCartao = document.getElementById('t-cartao').value;
+      const totalParcelas = parseInt(document.getElementById('t-parcelas').value);
+      const primeiroVencStr = document.getElementById('t-primeiro-vencimento').value;
+
+      const [anoInicio, mesInicio] = primeiroVencStr.split('-').map(Number);
+      
+      let diaVenc = 5; // Padrão se não tiver cartão
+      if (nomeCartao) {
+        const cartaoData = dadosGlobaisCartoes.find(c => c.nome === nomeCartao);
+        if (cartaoData) diaVenc = cartaoData.dia_vencimento;
+      }
+
+      const valorParcela = valorTotal / totalParcelas;
+      let lancamentos = [];
+
+      for (let i = 0; i < totalParcelas; i++) {
+        let dataVenc = new Date(anoInicio, (mesInicio - 1) + i, diaVenc);
+        const ano = dataVenc.getFullYear();
+        const mes = String(dataVenc.getMonth() + 1).padStart(2, '0');
+        const dia = String(dataVenc.getDate()).padStart(2, '0');
+
+        lancamentos.push({
+          Tipo: tipo,
+          Descricao: totalParcelas > 1 ? `${descricao} (${i + 1}/${totalParcelas})` : descricao,
+          Valor: valorParcela,
+          Data: dataCompraStr,
+          Vencimento: `${ano}-${mes}-${dia}`,
+          Cartao: nomeCartao,
+          Parcelas: totalParcelas,
+          Status: false
+        });
+      }
+
+      const { error } = await supabaseClient.from('transacoes').insert(lancamentos);
+      if (error) alert('Erro ao salvar: ' + error.message);
+      else {
+        alert('Lançamento cadastrado com sucesso!');
+        document.getElementById('form-compra').reset();
+        document.getElementById('t-data').valueAsDate = new Date();
+        document.getElementById('t-primeiro-vencimento').value = mesAnoAtualStr;
+        carregarTransacoes();
+      }
+    });
+
+    // CADASTRAR/EDITAR CARTÃO
+    document.getElementById('form-cartao').addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const nome = document.getElementById('c-nome').value.toUpperCase();
+      const limite = parseFloat(document.getElementById('c-limite').value);
+      const fechamento = parseInt(document.getElementById('c-fechamento').value);
+      const vencimento = parseInt(document.getElementById('c-vencimento').value);
+
+      const existente = dadosGlobaisCartoes.find(c => c.nome === nome);
+
+      if (existente) {
+        const { error } = await supabaseClient.from('cartoes').update({
+          limite, dia_fechamento: fechamento, dia_vencimento: vencimento
+        }).eq('id', existente.id);
+        if (error) alert('Erro ao atualizar: ' + error.message);
+        else alert('Cartão atualizado com sucesso!');
+      } else {
+        const { error } = await supabaseClient.from('cartoes').insert([{
+          nome, limite, dia_fechamento: fechamento, dia_vencimento: vencimento
+        }]);
+        if (error) alert('Erro ao cadastrar: ' + error.message);
+        else alert('Cartão cadastrado com sucesso!');
+      }
+
+      document.getElementById('form-cartao').reset();
+      inicializar();
+    });
+
+    // MODAL EDIÇÃO
+    function abrirModalEdit(t) {
+      document.getElementById('edit-id').value = t.id;
+      document.getElementById('edit-tipo').value = t.Tipo || 'Cartão';
+      document.getElementById('edit-descricao').value = t.Descricao;
+      document.getElementById('edit-valor').value = t.Valor;
+      document.getElementById('edit-data').value = t.Data;
+      document.getElementById('edit-vencimento').value = t.Vencimento;
+      document.getElementById('edit-cartao').value = t.Cartao || '';
+      document.getElementById('edit-status').value = t.Status ? "true" : "false";
+      document.getElementById('modal-editar').style.display = 'flex';
+    }
+
+    function fecharModalEdit() {
+      document.getElementById('modal-editar').style.display = 'none';
+    }
+
+    document.getElementById('form-editar').addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const id = document.getElementById('edit-id').value;
+      const Tipo = document.getElementById('edit-tipo').value;
+      const Descricao = document.getElementById('edit-descricao').value;
+      const Valor = parseFloat(document.getElementById('edit-valor').value);
+      const Data = document.getElementById('edit-data').value;
+      const Vencimento = document.getElementById('edit-vencimento').value;
+      const Cartao = document.getElementById('edit-cartao').value;
+      const Status = document.getElementById('edit-status').value === "true";
+
+      const { error } = await supabaseClient
+        .from('transacoes')
+        .update({ Tipo, Descricao, Valor, Data, Vencimento, Cartao, Status })
+        .eq('id', id);
+
+      if (error) alert('Erro ao atualizar: ' + error.message);
+      else {
+        alert('Lançamento alterado!');
+        fecharModalEdit();
+        carregarTransacoes();
+      }
+    });
+
+    // EXCLUIR TRANSAÇÃO
+    async function excluirTransacao(id) {
+      if (confirm('Deseja realmente apagar este lançamento?')) {
+        const { error } = await supabaseClient.from('transacoes').delete().eq('id', id);
+        if (error) alert('Erro ao excluir: ' + error.message);
+        else carregarTransacoes();
+      }
+    }
+
+    // START
+    inicializar();
+  </script>
+</body>
+</html>
