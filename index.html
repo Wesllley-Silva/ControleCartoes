@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Painel Financeiro - Projeção 6 Meses</title>
+  <title>Painel Financeiro & Cartões de Crédito</title>
   
   <style>
     :root {
@@ -18,28 +18,23 @@
       --accent-blue-hover: #2563eb;
       --accent-yellow: #f59e0b;
       --accent-red: #ef4444;
+      --accent-purple: #8b5cf6;
     }
 
     * { box-sizing: border-box; font-family: 'Inter', system-ui, -apple-system, sans-serif; }
     body { background-color: var(--bg-color); color: var(--text-main); margin: 0; padding: 20px; }
-    .container { max-width: 1100px; margin: 0 auto; }
+    .container { max-width: 1200px; margin: 0 auto; }
     
     h1 { text-align: center; margin-bottom: 25px; font-size: 1.8em; color: var(--text-main); font-weight: 700; }
 
-    /* CARDS DE RESUMO FIXOS */
-    .cards-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 16px; margin-bottom: 25px; }
-    .card { background: var(--card-bg); border: 1px solid var(--card-border); padding: 20px; border-radius: 12px; box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3); }
-    .card h3 { margin: 0 0 8px 0; font-size: 0.8em; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.5px; }
-    .card p { margin: 0; font-size: 1.6em; font-weight: 700; }
-    .card.limite p { color: var(--accent-green); }
-    .card.detalhe-limite p { color: var(--accent-blue); }
-    .card.atual p { color: var(--accent-red); }
-
-    /* PROJEÇÃO MÊS A MÊS */
-    .projecao-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(130px, 1fr)); gap: 12px; margin-bottom: 25px; }
-    .card-mes { background: var(--card-bg); border: 1px solid var(--card-border); padding: 14px; border-radius: 10px; text-align: center; }
-    .card-mes span { display: block; font-size: 0.75em; color: var(--text-muted); font-weight: 600; text-transform: uppercase; }
-    .card-mes strong { display: block; font-size: 1.1em; color: var(--accent-yellow); margin-top: 5px; font-weight: 700; }
+    /* GRID DE CARDS DOS CARTÕES */
+    .cartoes-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 16px; margin-bottom: 25px; }
+    .card-cartao { background: var(--card-bg); border: 1px solid var(--card-border); padding: 18px; border-radius: 12px; box-shadow: 0 4px 12px rgba(0,0,0,0.3); position: relative; }
+    .card-cartao.critico { border-color: var(--accent-red); background: rgba(239, 68, 68, 0.05); }
+    .card-cartao h3 { margin: 0 0 10px 0; font-size: 1.1em; display: flex; justify-content: space-between; align-items: center; }
+    .card-cartao .info { font-size: 0.85em; color: var(--text-muted); margin-bottom: 4px; }
+    .card-cartao .valor { font-size: 1.2em; font-weight: 700; color: var(--accent-green); margin-top: 6px; }
+    .badge-fechada { background: rgba(245, 158, 11, 0.2); color: var(--accent-yellow); border: 1px solid var(--accent-yellow); font-size: 0.7em; padding: 2px 6px; border-radius: 4px; }
 
     /* CONTAINERS / CAIXAS */
     .box { background: var(--card-bg); border: 1px solid var(--card-border); padding: 24px; border-radius: 12px; box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3); margin-bottom: 25px; }
@@ -58,28 +53,38 @@
     .btn-green:hover { background-color: var(--accent-green-hover); }
     .btn-blue { background-color: var(--accent-blue); color: #ffffff; font-weight: 600; border: none; cursor: pointer; }
     .btn-blue:hover { background-color: var(--accent-blue-hover); }
-    .btn-edit { background-color: rgba(59, 130, 246, 0.2); color: var(--accent-blue); border: 1px solid rgba(59, 130, 246, 0.4); padding: 6px 10px; border-radius: 6px; cursor: pointer; font-size: 0.85em; width: auto; margin-right: 4px; }
-    .btn-edit:hover { background-color: var(--accent-blue); color: #fff; }
-    .btn-delete { background-color: rgba(239, 68, 68, 0.2); color: var(--accent-red); border: 1px solid rgba(239, 68, 68, 0.4); padding: 6px 10px; border-radius: 6px; cursor: pointer; font-size: 0.85em; width: auto; }
-    .btn-delete:hover { background-color: var(--accent-red); color: #fff; }
+    .btn-secondary { background-color: #475569; color: #fff; border: none; cursor: pointer; }
+    .btn-secondary:hover { background-color: #334155; }
+    .btn-action { padding: 6px 10px; border-radius: 6px; cursor: pointer; font-size: 0.85em; width: auto; margin-right: 2px; }
+    .btn-edit { background: rgba(59, 130, 246, 0.2); color: var(--accent-blue); border: 1px solid rgba(59, 130, 246, 0.4); }
+    .btn-edit:hover { background: var(--accent-blue); color: #fff; }
+    .btn-delete { background: rgba(239, 68, 68, 0.2); color: var(--accent-red); border: 1px solid rgba(239, 68, 68, 0.4); }
+    .btn-delete:hover { background: var(--accent-red); color: #fff; }
+    .btn-clone { background: rgba(245, 158, 11, 0.2); color: var(--accent-yellow); border: 1px solid rgba(245, 158, 11, 0.4); }
+    .btn-clone:hover { background: var(--accent-yellow); color: #fff; }
 
-    /* BARRA DE FILTRO E AÇÕES */
-    .fatura-actions { display: flex; gap: 15px; align-items: flex-end; justify-content: space-between; background: rgba(255, 255, 255, 0.03); padding: 16px; border-radius: 10px; border: 1px solid var(--card-border); margin-bottom: 20px; flex-wrap: wrap; }
-    .fatura-actions select { min-width: 200px; }
+    /* FILTROS E BARRAS DE AÇÃO */
+    .filters-bar { display: grid; grid-template-columns: repeat(auto-fit, minmax(160px, 1fr)); gap: 12px; background: rgba(255, 255, 255, 0.02); padding: 16px; border-radius: 10px; border: 1px solid var(--card-border); margin-bottom: 15px; align-items: end; }
+    .selection-bar { display: flex; justify-content: space-between; align-items: center; background: rgba(59, 130, 246, 0.1); border: 1px solid rgba(59, 130, 246, 0.3); padding: 12px 18px; border-radius: 8px; margin-bottom: 15px; flex-wrap: wrap; gap: 10px; }
+    .selection-info { font-weight: 600; color: var(--accent-blue); font-size: 0.95em; }
 
     /* TABELA */
     .table-responsive { overflow-x: auto; }
     table { width: 100%; border-collapse: collapse; margin-top: 10px; }
-    th, td { border-bottom: 1px solid var(--card-border); padding: 14px; text-align: left; font-size: 0.9em; }
-    th { background-color: rgba(255, 255, 255, 0.02); color: var(--text-muted); font-weight: 600; }
+    th, td { border-bottom: 1px solid var(--card-border); padding: 12px; text-align: left; font-size: 0.88em; }
+    th { background-color: rgba(255, 255, 255, 0.03); color: var(--text-muted); font-weight: 600; cursor: pointer; user-select: none; }
+    th:hover { color: var(--text-main); }
     tr:hover { background-color: rgba(255, 255, 255, 0.02); }
-    
+    input[type="checkbox"] { width: 18px; height: 18px; cursor: pointer; accent-color: var(--accent-blue); }
+
     /* BADGES */
-    .badge { padding: 4px 10px; border-radius: 20px; font-size: 0.75em; font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px; }
+    .badge { padding: 3px 8px; border-radius: 12px; font-size: 0.75em; font-weight: 700; text-transform: uppercase; }
     .badge-pago { background: rgba(16, 185, 129, 0.15); color: var(--accent-green); border: 1px solid rgba(16, 185, 129, 0.3); }
     .badge-pendente { background: rgba(239, 68, 68, 0.15); color: var(--accent-red); border: 1px solid rgba(239, 68, 68, 0.3); }
+    .badge-tipo-cartao { background: rgba(59, 130, 246, 0.15); color: var(--accent-blue); border: 1px solid rgba(59, 130, 246, 0.3); }
+    .badge-tipo-fixa { background: rgba(139, 92, 246, 0.15); color: var(--accent-purple); border: 1px solid rgba(139, 92, 246, 0.3); }
 
-    /* MODAL DE EDIÇÃO */
+    /* MODAL */
     .modal-overlay { position: fixed; top:0; left:0; width:100%; height:100%; background: rgba(0,0,0,0.7); display:none; justify-content:center; align-items:center; z-index:1000; }
     .modal { background: var(--card-bg); padding: 25px; border-radius: 12px; border: 1px solid var(--card-border); width: 90%; max-width: 500px; }
   </style>
@@ -89,35 +94,128 @@
 <body>
 
   <div class="container">
-    <h1>💳 Dashboard Financeiro de Cartões</h1>
+    <h1>💳 Painel Financeiro & Cartões</h1>
 
-    <!-- CARDS DE RESUMO PRINCIPAIS -->
-    <div class="cards-grid">
-      <div class="card limite">
-        <h3>Limite Disponível Global</h3>
-        <p id="resumo-limite">R$ 0,00</p>
-      </div>
-      <div class="card detalhe-limite">
-        <h3 id="titulo-limite-cartao">Limite Disponível (Filtro)</h3>
-        <p id="resumo-limite-cartao">R$ 0,00</p>
-      </div>
-      <div class="card atual">
-        <h3>Fatura do Mês Atual</h3>
-        <p id="resumo-fatura-atual">R$ 0,00</p>
+    <!-- PAINEL RESUMO DE CARTÕES E LIMITES -->
+    <div class="box">
+      <h2>📊 Resumo dos Cartões & Limites</h2>
+      <div class="cartoes-grid" id="container-cartoes-resumo">
+        <!-- Renderizado via JS -->
       </div>
     </div>
 
-    <!-- PROJEÇÃO DETALHADA DOS PRÓXIMOS 6 MESES -->
+    <!-- FORMULÁRIO: NOVA COMPRA -->
     <div class="box">
-      <h2>📅 Planejamento de Faturas (Próximos Meses)</h2>
-      <div class="projecao-grid" id="container-projecao">
-        <!-- Gerado via JavaScript -->
+      <h2>+ Lançar Nova Compra / Conta</h2>
+      <form id="form-compra">
+        <div>
+          <label>Tipo de Lançamento</label>
+          <select id="t-tipo" onchange="alterarTipoLancamento(this.value)" required>
+            <option value="CARTAO">Cartão de Crédito</option>
+            <option value="CONTA_FIXA">Conta Fixa (Água, Luz, Net...)</option>
+          </select>
+        </div>
+        <div>
+          <label>Descrição</label>
+          <input type="text" id="t-descricao" placeholder="Ex: Mercado, Netflix, Luz" required>
+        </div>
+        <div>
+          <label>Valor Total (R$)</label>
+          <input type="number" id="t-valor" step="0.01" placeholder="Ex: 250.00" required>
+        </div>
+        <div>
+          <label>Data da Compra / Emissão</label>
+          <input type="date" id="t-data" required>
+        </div>
+        <div id="campo-cartao-container">
+          <label>Cartão / Forma de Pagamento</label>
+          <select id="t-cartao"></select>
+        </div>
+        <div id="campo-parcelas-container">
+          <label>Nº de Parcelas</label>
+          <input type="number" id="t-parcelas" value="1" min="1" required>
+        </div>
+        <div>
+          <label>Mês da 1ª Fatura / Vencimento</label>
+          <input type="month" id="t-primeiro-vencimento" required>
+        </div>
+        <div class="full-width">
+          <button type="submit" class="btn-green">➕ Lançar Compra / Parcela</button>
+        </div>
+      </form>
+    </div>
+
+    <!-- TABELA E GESTÃO DE LANÇAMENTOS -->
+    <div class="box">
+      <h2>📋 Detalhamento de Faturas e Compras</h2>
+
+      <!-- PAINEL DE FILTROS -->
+      <div class="filters-bar">
+        <div>
+          <label>Tipo:</label>
+          <select id="f-tipo" onchange="aplicarFiltros()">
+            <option value="TODOS">Todos os Tipos</option>
+            <option value="CARTAO">Cartão de Crédito</option>
+            <option value="CONTA_FIXA">Contas Fixas</option>
+          </select>
+        </div>
+        <div>
+          <label>Filtrar Cartão:</label>
+          <select id="f-cartao" onchange="aplicarFiltros()"></select>
+        </div>
+        <div>
+          <label>Mês do Vencimento:</label>
+          <input type="month" id="f-mes" onchange="aplicarFiltros()">
+        </div>
+        <div>
+          <label>Status:</label>
+          <select id="f-status" onchange="aplicarFiltros()">
+            <option value="TODOS">Todos os Status</option>
+            <option value="PENDENTE" selected>Apenas PENDENTES</option>
+            <option value="PAGO">Apenas PAGOS</option>
+          </select>
+        </div>
+        <div>
+          <button type="button" class="btn-secondary" onclick="limparFiltros()">🧹 Limpar Filtros</button>
+        </div>
+      </div>
+
+      <!-- BARRA DE SELEÇÃO E PAGAMENTO EM LOTE -->
+      <div class="selection-bar">
+        <div class="selection-info">
+          <span id="txt-contador-selecao">0 itens marcados (R$ 0,00)</span>
+          <br><small style="color: var(--text-muted);" id="txt-total-exibido">Total exibido na tela: R$ 0,00</small>
+        </div>
+        <button type="button" class="btn-green" style="width: auto; padding: 10px 20px;" onclick="pagarItensSelecionados()">✅ Pagar Selecionados</button>
+      </div>
+
+      <!-- TABELA COM ORDENAÇÃO -->
+      <div class="table-responsive">
+        <table>
+          <thead>
+            <tr>
+              <th style="width: 30px;"><input type="checkbox" id="chk-marcar-todos" onchange="marcarTodosCheckboxes(this)"></th>
+              <th onclick="ordenarTabela('Tipo')">Tipo ↕</th>
+              <th onclick="ordenarTabela('Data')">Data ↕</th>
+              <th onclick="ordenarTabela('Descricao')">Descrição ↕</th>
+              <th onclick="ordenarTabela('Cartao')">Cartão / Origem ↕</th>
+              <th onclick="ordenarTabela('Parcelas')">Parc. ↕</th>
+              <th onclick="ordenarTabela('Vencimento')">Venc. Fatura ↕</th>
+              <th onclick="ordenarTabela('Valor')">Valor ↕</th>
+              <th onclick="ordenarTabela('Status')">Status ↕</th>
+              <th>Ações</th>
+            </tr>
+          </thead>
+          <tbody id="tabela-corpo">
+            <tr><td colspan="10" style="text-align:center; color: var(--text-muted);">Carregando dados...</td></tr>
+          </tbody>
+        </table>
       </div>
     </div>
 
     <!-- FORMULÁRIO: CADASTRAR/EDITAR CARTÃO -->
     <div class="box">
-      <h2>+ Cadastrar ou Atualizar Limite do Cartão</h2>
+      <h2>⚙️ Cadastrar ou Atualizar Limite de Cartão</h2>
       <form id="form-cartao">
         <div>
           <label>Nome do Cartão</label>
@@ -136,89 +234,26 @@
           <input type="number" id="c-vencimento" min="1" max="31" placeholder="Ex: 28" required>
         </div>
         <div class="full-width">
-          <button type="submit" class="btn-blue">Salvar / Atualizar Cartão</button>
+          <button type="submit" class="btn-blue">💾 Salvar / Atualizar Configuração do Cartão</button>
         </div>
       </form>
     </div>
 
-    <!-- FORMULÁRIO: NOVA COMPRA -->
-    <div class="box">
-      <h2>+ Lançar Nova Compra</h2>
-      <form id="form-compra">
-        <div>
-          <label>Descrição</label>
-          <input type="text" id="t-descricao" placeholder="Ex: Mercado, Notebook" required>
-        </div>
-        <div>
-          <label>Valor Total (R$)</label>
-          <input type="number" id="t-valor" step="0.01" placeholder="Ex: 300.00" required>
-        </div>
-        <div>
-          <label>Data da Compra</label>
-          <input type="date" id="t-data" required>
-        </div>
-        <div>
-          <label>Cartão</label>
-          <select id="t-cartao" required>
-            <option value="">Selecione...</option>
-          </select>
-        </div>
-        <div>
-          <label>Nº de Parcelas</label>
-          <input type="number" id="t-parcelas" value="1" min="1" required>
-        </div>
-        <div>
-          <label>Primeiro Vencimento (Mês/Ano)</label>
-          <input type="month" id="t-primeiro-vencimento" required>
-        </div>
-        <div class="full-width">
-          <button type="submit" class="btn-green">Lançar Compra Inteligente</button>
-        </div>
-      </form>
-    </div>
-
-    <!-- HISTÓRICO E GESTÃO DE FATURAS -->
-    <div class="box">
-      <h2>Detalhamento e Gestão das Faturas</h2>
-      
-      <div class="fatura-actions">
-        <div>
-          <label>Filtrar por Cartão:</label>
-          <select id="filtro-cartao" onchange="carregarDados()"></select>
-        </div>
-        <div>
-          <button type="button" class="btn-green" onclick="pagarFaturaAtual()">✅ Pagar Fatura Selecionada e Liberar Limite</button>
-        </div>
-      </div>
-
-      <div class="table-responsive">
-        <table>
-          <thead>
-            <tr>
-              <th>Data Compra</th>
-              <th>Descrição</th>
-              <th>Cartão</th>
-              <th>Parcela</th>
-              <th>Venc. Fatura</th>
-              <th>Valor Parcela</th>
-              <th>Status</th>
-              <th>Ações</th>
-            </tr>
-          </thead>
-          <tbody id="tabela-corpo">
-            <tr><td colspan="8" style="text-align:center; color: var(--text-muted);">Carregando dados...</td></tr>
-          </tbody>
-        </table>
-      </div>
-    </div>
   </div>
 
-  <!-- MODAL PARA EDITAR TRANSAÇÃO -->
+  <!-- MODAL DE EDIÇÃO -->
   <div class="modal-overlay" id="modal-editar">
     <div class="modal">
       <h2>✏️ Editar Lançamento</h2>
       <form id="form-editar">
         <input type="hidden" id="edit-id">
+        <div>
+          <label>Tipo</label>
+          <select id="edit-tipo" required>
+            <option value="CARTAO">Cartão de Crédito</option>
+            <option value="CONTA_FIXA">Conta Fixa</option>
+          </select>
+        </div>
         <div>
           <label>Descrição</label>
           <input type="text" id="edit-descricao" required>
@@ -237,7 +272,7 @@
         </div>
         <div>
           <label>Cartão</label>
-          <select id="edit-cartao" required></select>
+          <select id="edit-cartao"></select>
         </div>
         <div>
           <label>Status</label>
@@ -248,7 +283,7 @@
         </div>
         <div class="full-width" style="display:flex; gap:10px; margin-top:10px;">
           <button type="submit" class="btn-blue">Salvar Alterações</button>
-          <button type="button" class="btn-delete" onclick="fecharModalEdit()">Cancelar</button>
+          <button type="button" class="btn-secondary" onclick="fecharModalEdit()">Cancelar</button>
         </div>
       </form>
     </div>
@@ -259,308 +294,148 @@
     const SUPABASE_KEY = 'sb_publishable_8-eWESul1nNUDuFz6P1S9w_BlJDLu-i';
     const supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
 
-    const hojePadrao = new Date();
-    document.getElementById('t-data').valueAsDate = hojePadrao;
-    const mesAnoAtualStr = `${hojePadrao.getFullYear()}-${String(hojePadrao.getMonth() + 1).padStart(2, '0')}`;
+    let dadosGlobaisTransacoes = [];
+    let dadosGlobaisCartoes = [];
+    let ordenacaoAtual = { coluna: 'Vencimento', ascendente: true };
+
+    const hoje = new Date();
+    document.getElementById('t-data').valueAsDate = hoje;
+    const mesAnoAtualStr = `${hoje.getFullYear()}-${String(hoje.getMonth() + 1).padStart(2, '0')}`;
     document.getElementById('t-primeiro-vencimento').value = mesAnoAtualStr;
+    document.getElementById('f-mes').value = mesAnoAtualStr;
 
-    // CADASTRAR OU ATUALIZAR CARTÃO
-    document.getElementById('form-cartao').addEventListener('submit', async (e) => {
-      e.preventDefault();
-      const nome = document.getElementById('c-nome').value.toUpperCase();
-      const limite = parseFloat(document.getElementById('c-limite').value);
-      const fechamento = parseInt(document.getElementById('c-fechamento').value);
-      const vencimento = parseInt(document.getElementById('c-vencimento').value);
+    // INICIALIZAÇÃO
+    async function inicializar() {
+      await carregarCartoes();
+      await carregarTransacoes();
+    }
 
-      const { data: existente } = await supabaseClient.from('cartoes').select('*').eq('nome', nome).single();
+    // ALTERAR MODO ENTRE CARTÃO E CONTA FIXA NO FORMULÁRIO
+    function alterarTipoLancamento(tipo) {
+      const containerCartao = document.getElementById('campo-cartao-container');
+      const containerParcelas = document.getElementById('campo-parcelas-container');
+      const selectCartao = document.getElementById('t-cartao');
 
-      if (existente) {
-        const { error } = await supabaseClient.from('cartoes').update({
-          limite, dia_fechamento: fechamento, dia_vencimento: vencimento
-        }).eq('id', existente.id);
-        if (error) alert('Erro ao atualizar cartão: ' + error.message);
-        else alert('Limite e dados do cartão atualizados com sucesso!');
+      if (tipo === 'CONTA_FIXA') {
+        containerCartao.style.display = 'none';
+        selectCartao.removeAttribute('required');
+        document.getElementById('t-parcelas').value = 1;
+        containerParcelas.style.display = 'none';
       } else {
-        const { error } = await supabaseClient.from('cartoes').insert([{
-          nome, limite, dia_fechamento: fechamento, dia_vencimento: vencimento
-        }]);
-        if (error) alert('Erro ao cadastrar cartão: ' + error.message);
-        else alert('Cartão cadastrado com sucesso!');
+        containerCartao.style.display = 'block';
+        selectCartao.setAttribute('required', 'true');
+        containerParcelas.style.display = 'block';
       }
-
-      document.getElementById('form-cartao').reset();
-      carregarCartoes();
-    });
+    }
 
     // CARREGAR CARTÕES
     async function carregarCartoes() {
       const { data } = await supabaseClient.from('cartoes').select('*');
+      dadosGlobaisCartoes = data || [];
+
       const selectCompra = document.getElementById('t-cartao');
-      const selectFiltro = document.getElementById('filtro-cartao');
-      const selectEditCartao = document.getElementById('edit-cartao');
-      
-      const valorFiltroAtual = selectFiltro.value || 'TODOS';
+      const selectFiltro = document.getElementById('f-cartao');
+      const selectEdit = document.getElementById('edit-cartao');
 
       selectCompra.innerHTML = '<option value="">Selecione...</option>';
       selectFiltro.innerHTML = '<option value="TODOS">Todos os Cartões</option>';
-      selectEditCartao.innerHTML = '';
+      selectEdit.innerHTML = '<option value="">Sem Cartão (Conta Fixa)</option>';
 
-      if (data) {
-        data.forEach(c => {
-          selectCompra.innerHTML += `<option value="${c.nome}">${c.nome}</option>`;
-          selectFiltro.innerHTML += `<option value="${c.nome}">${c.nome}</option>`;
-          selectEditCartao.innerHTML += `<option value="${c.nome}">${c.nome}</option>`;
-        });
-      }
-      selectFiltro.value = valorFiltroAtual;
-      carregarDados();
+      dadosGlobaisCartoes.forEach(c => {
+        selectCompra.innerHTML += `<option value="${c.nome}">${c.nome}</option>`;
+        selectFiltro.innerHTML += `<option value="${c.nome}">${c.nome}</option>`;
+        selectEdit.innerHTML += `<option value="${c.nome}">${c.nome}</option>`;
+      });
     }
 
-    // LANÇAR COMPRA
-    document.getElementById('form-compra').addEventListener('submit', async (e) => {
-      e.preventDefault();
-      const descricao = document.getElementById('t-descricao').value;
-      const valorTotal = parseFloat(document.getElementById('t-valor').value);
-      const dataCompraStr = document.getElementById('t-data').value;
-      const nomeCartao = document.getElementById('t-cartao').value;
-      const totalParcelas = parseInt(document.getElementById('t-parcelas').value);
-      const primeiroVencStr = document.getElementById('t-primeiro-vencimento').value;
+    // CARREGAR TRANSAÇÕES
+    async function carregarTransacoes() {
+      const { data } = await supabaseClient.from('transacoes').select('*');
+      dadosGlobaisTransacoes = data || [];
+      renderizarPainelCartoes();
+      aplicarFiltros();
+    }
 
-      const [anoInicio, mesInicio] = primeiroVencStr.split('-').map(Number);
-      const { data: cartaoData } = await supabaseClient.from('cartoes').select('*').eq('nome', nomeCartao).single();
-      const diaVenc = cartaoData ? cartaoData.dia_vencimento : 5;
+    // RENDERIZAR CARDS DOS CARTÕES (Ignora Contas Fixas no abate de limite)
+    function renderizarPainelCartoes() {
+      const container = document.getElementById('container-cartoes-resumo');
+      container.innerHTML = '';
 
-      const valorParcela = valorTotal / totalParcelas;
-      let lancamentos = [];
+      const diaHoje = hoje.getDate();
 
-      for (let i = 0; i < totalParcelas; i++) {
-        let dataVenc = new Date(anoInicio, (mesInicio - 1) + i, diaVenc);
-        const ano = dataVenc.getFullYear();
-        const mes = String(dataVenc.getMonth() + 1).padStart(2, '0');
-        const dia = String(dataVenc.getDate()).padStart(2, '0');
+      dadosGlobaisCartoes.forEach(c => {
+        // Apenas transações do tipo CARTAO afetam o limite
+        const transacoesDoCartao = dadosGlobaisTransacoes.filter(t => 
+          t.Cartao === c.nome && 
+          !t.Status && 
+          (t.Tipo === 'CARTAO' || !t.Tipo)
+        );
+        
+        const totalPendente = transacoesDoCartao.reduce((acc, cur) => acc + (cur.Valor || 0), 0);
+        const disponivel = Math.max(0, c.limite - totalPendente);
+        const pctUso = c.limite > 0 ? ((totalPendente / c.limite) * 100).toFixed(1) : 0;
+        const isCritico = pctUso >= 80;
+        const isFechada = diaHoje >= c.dia_fechamento;
 
-        lancamentos.push({
-          Descricao: `${descricao} (${i + 1}/${totalParcelas})`,
-          Valor: valorParcela,
-          Data: dataCompraStr,
-          Vencimento: `${ano}-${mes}-${dia}`,
-          Cartao: nomeCartao,
-          Parcelas: totalParcelas,
-          Status: false
-        });
-      }
-
-      const { error } = await supabaseClient.from('transacoes').insert(lancamentos);
-      if (error) alert('Erro ao salvar compras: ' + error.message);
-      else {
-        alert('Compra lançada com sucesso!');
-        document.getElementById('form-compra').reset();
-        document.getElementById('t-data').valueAsDate = new Date();
-        document.getElementById('t-primeiro-vencimento').value = mesAnoAtualStr;
-        carregarDados();
-      }
-    });
-
-    // CARREGAR DADOS E CALCULAR LIMITES
-    async function carregarDados() {
-      const filtro = document.getElementById('filtro-cartao').value;
-
-      const { data: todasTransacoes } = await supabaseClient.from('transacoes').select('*').order('Vencimento', { ascending: true });
-      const { data: cartoes } = await supabaseClient.from('cartoes').select('*');
-
-      const tbody = document.getElementById('tabela-corpo');
-      tbody.innerHTML = '';
-
-      let limiteGlobal = 0;
-      let limiteFiltroCartao = 0;
-      let pendenteGlobal = 0;
-      let pendenteFiltroCartao = 0;
-      let faturaAtual = 0;
-
-      if (cartoes) {
-        cartoes.forEach(c => {
-          limiteGlobal += c.limite;
-          if (filtro !== 'TODOS' && filtro === c.nome) limiteFiltroCartao = c.limite;
-        });
-      }
-
-      const hoje = new Date();
-      const mesAtualIdx = hoje.getMonth();
-      const anoAtualIdx = hoje.getFullYear();
-
-      // Próximos 6 meses
-      let projecaoMeses = [];
-      for (let i = 1; i <= 6; i++) {
-        let d = new Date(anoAtualIdx, mesAtualIdx + i, 1);
-        projecaoMeses.push({
-          mes: d.getMonth(),
-          ano: d.getFullYear(),
-          nome: d.toLocaleDateString('pt-BR', { month: 'short', year: '2-digit' }),
-          valor: 0
-        });
-      }
-      let valorExcedente = 0;
-
-      if (todasTransacoes) {
-        todasTransacoes.forEach(t => {
-          const dtVenc = new Date((t.Vencimento || t.Data) + 'T00:00:00');
-          const isPago = t.Status;
-          const pertenceAoFiltro = (filtro === 'TODOS' || t.Cartao === filtro);
-
-          if (!isPago) {
-            pendenteGlobal += t.Valor;
-            if (pertenceAoFiltro) {
-              pendenteFiltroCartao += t.Valor;
-            }
-
-            if (pertenceAoFiltro) {
-              if (dtVenc.getMonth() === mesAtualIdx && dtVenc.getFullYear() === anoAtualIdx) {
-                faturaAtual += t.Valor;
-              } else if (dtVenc > hoje) {
-                let somado = false;
-                projecaoMeses.forEach(m => {
-                  if (dtVenc.getMonth() === m.mes && dtVenc.getFullYear() === m.ano) {
-                    m.valor += t.Valor;
-                    somado = true;
-                  }
-                });
-                if (!somado && dtVenc > new Date(projecaoMeses[5].ano, projecaoMeses[5].mes, 31)) {
-                  valorExcedente += t.Valor;
-                }
-              }
-            }
-          }
-
-          if (pertenceAoFiltro) {
-            tbody.innerHTML += `
-              <tr>
-                <td>${t.Data ? t.Data.split('-').reverse().join('/') : '-'}</td>
-                <td>${t.Descricao}</td>
-                <td><strong>${t.Cartao}</strong></td>
-                <td>${t.Parcelas || 1}x</td>
-                <td>${t.Vencimento ? t.Vencimento.split('-').reverse().join('/') : '-'}</td>
-                <td>${t.Valor ? t.Valor.toLocaleString('pt-BR', {style:'currency', currency:'BRL'}) : 'R$ 0,00'}</td>
-                <td><span class="badge ${isPago ? 'badge-pago' : 'badge-pendente'}">${isPago ? 'PAGO' : 'PENDENTE'}</span></td>
-                <td>
-                  <button class="btn-edit" onclick='abrirModalEdit(${JSON.stringify(t)})'>✏️ Editar</button>
-                  <button class="btn-delete" onclick="excluirTransacao(${t.id})">🗑️ Excluir</button>
-                </td>
-              </tr>
-            `;
-          }
-        });
-      }
-
-      // Renderizar Cards de Projeção
-      const containerProjecao = document.getElementById('container-projecao');
-      containerProjecao.innerHTML = '';
-      projecaoMeses.forEach(m => {
-        containerProjecao.innerHTML += `
-          <div class="card-mes">
-            <span>${m.nome}</span>
-            <strong>${m.valor.toLocaleString('pt-BR', {style:'currency', currency:'BRL'})}</strong>
+        container.innerHTML += `
+          <div class="card-cartao ${isCritico ? 'critico' : ''}">
+            <h3>
+              ${c.nome}
+              ${isFechada ? '<span class="badge-fechada">🔒 Fatura Fechada</span>' : ''}
+            </h3>
+            <div class="info">Limite Total: <strong>${c.limite.toLocaleString('pt-BR', {style:'currency', currency:'BRL'})}</strong></div>
+            <div class="info">Comprometido: <strong>${totalPendente.toLocaleString('pt-BR', {style:'currency', currency:'BRL'})} (${pctUso}%)</strong></div>
+            <div class="valor">Disp: ${disponivel.toLocaleString('pt-BR', {style:'currency', currency:'BRL'})}</div>
           </div>
         `;
       });
-      containerProjecao.innerHTML += `
-        <div class="card-mes" style="border-color: var(--accent-blue);">
-          <span>+6 Meses</span>
-          <strong style="color: var(--accent-blue);">${valorExcedente.toLocaleString('pt-BR', {style:'currency', currency:'BRL'})}</strong>
-        </div>
-      `;
-
-      // Resumos Financeiros
-      const limiteDisponivelGlobal = Math.max(0, limiteGlobal - pendenteGlobal);
-      document.getElementById('resumo-limite').textContent = limiteDisponivelGlobal.toLocaleString('pt-BR', {style:'currency', currency:'BRL'});
-      document.getElementById('resumo-fatura-atual').textContent = faturaAtual.toLocaleString('pt-BR', {style:'currency', currency:'BRL'});
-
-      if (filtro && filtro !== 'TODOS') {
-        const disponivelCartao = Math.max(0, limiteFiltroCartao - pendenteFiltroCartao);
-        document.getElementById('titulo-limite-cartao').textContent = `Limite Disponível (${filtro})`;
-        document.getElementById('resumo-limite-cartao').textContent = disponivelCartao.toLocaleString('pt-BR', {style:'currency', currency:'BRL'});
-      } else {
-        document.getElementById('titulo-limite-cartao').textContent = 'Limite Disponível (Todos)';
-        document.getElementById('resumo-limite-cartao').textContent = limiteDisponivelGlobal.toLocaleString('pt-BR', {style:'currency', currency:'BRL'});
-      }
     }
 
-    // MODAL DE EDIÇÃO
-    function abrirModalEdit(t) {
-      document.getElementById('edit-id').value = t.id;
-      document.getElementById('edit-descricao').value = t.Descricao;
-      document.getElementById('edit-valor').value = t.Valor;
-      document.getElementById('edit-data').value = t.Data;
-      document.getElementById('edit-vencimento').value = t.Vencimento;
-      document.getElementById('edit-cartao').value = t.Cartao;
-      document.getElementById('edit-status').value = t.Status ? "true" : "false";
-      document.getElementById('modal-editar').style.display = 'flex';
-    }
+    // APLICAR FILTROS E ORDENAÇÃO NA TABELA
+    function aplicarFiltros() {
+      const filtroTipo = document.getElementById('f-tipo').value;
+      const filtroCartao = document.getElementById('f-cartao').value;
+      const filtroMes = document.getElementById('f-mes').value;
+      const filtroStatus = document.getElementById('f-status').value;
 
-    function fecharModalEdit() {
-      document.getElementById('modal-editar').style.display = 'none';
-    }
-
-    document.getElementById('form-editar').addEventListener('submit', async (e) => {
-      e.preventDefault();
-      const id = document.getElementById('edit-id').value;
-      const Descricao = document.getElementById('edit-descricao').value;
-      const Valor = parseFloat(document.getElementById('edit-valor').value);
-      const Data = document.getElementById('edit-data').value;
-      const Vencimento = document.getElementById('edit-vencimento').value;
-      const Cartao = document.getElementById('edit-cartao').value;
-      const Status = document.getElementById('edit-status').value === "true";
-
-      const { error } = await supabaseClient
-        .from('transacoes')
-        .update({ Descricao, Valor, Data, Vencimento, Cartao, Status })
-        .eq('id', id);
-
-      if (error) alert('Erro ao atualizar: ' + error.message);
-      else {
-        alert('Lançamento atualizado!');
-        fecharModalEdit();
-        carregarDados();
-      }
-    });
-
-    // EXCLUIR TRANSAÇÃO
-    async function excluirTransacao(id) {
-      if (confirm('Tem certeza que deseja apagar essa parcela/lançamento?')) {
-        const { error } = await supabaseClient.from('transacoes').delete().eq('id', id);
-        if (error) alert('Erro ao excluir: ' + error.message);
-        else carregarDados();
-      }
-    }
-
-    // PAGAR FATURA
-    async function pagarFaturaAtual() {
-      const filtro = document.getElementById('filtro-cartao').value;
-      if (filtro === 'TODOS' || !filtro) {
-        alert('Selecione um cartão específico no filtro para pagar a fatura.');
-        return;
-      }
-
-      if (confirm(`Confirmar o pagamento da fatura deste mês do cartão ${filtro}?`)) {
-        const hoje = new Date();
-        const inicioMes = new Date(hoje.getFullYear(), hoje.getMonth(), 1).toISOString().split('T')[0];
-        const fimMes = new Date(hoje.getFullYear(), hoje.getMonth() + 1, 0).toISOString().split('T')[0];
-
-        const { error } = await supabaseClient
-          .from('transacoes')
-          .update({ Status: true })
-          .eq('Cartao', filtro)
-          .gte('Vencimento', inicioMes)
-          .lte('Vencimento', fimMes);
-
-        if (error) alert('Erro ao atualizar: ' + error.message);
-        else {
-          alert('Fatura paga! O limite do cartão foi liberado.');
-          carregarDados();
+      let resultado = dadosGlobaisTransacoes.filter(t => {
+        const tipoItem = t.Tipo || 'CARTAO';
+        const matchTipo = (filtroTipo === 'TODOS' || tipoItem === filtroTipo);
+        const matchCartao = (filtroCartao === 'TODOS' || t.Cartao === filtroCartao);
+        const matchStatus = (filtroStatus === 'TODOS') || 
+                            (filtroStatus === 'PENDENTE' && !t.Status) || 
+                            (filtroStatus === 'PAGO' && t.Status);
+        
+        let matchMes = true;
+        if (filtroMes && t.Vencimento) {
+          matchMes = t.Vencimento.startsWith(filtroMes);
         }
-      }
+
+        return matchTipo && matchCartao && matchStatus && matchMes;
+      });
+
+      // Ordenação
+      resultado.sort((a, b) => {
+        let valA = a[ordenacaoAtual.coluna] || '';
+        let valB = b[ordenacaoAtual.coluna] || '';
+
+        if (typeof valA === 'string') valA = valA.toLowerCase();
+        if (typeof valB === 'string') valB = valB.toLowerCase();
+
+        if (valA < valB) return ordenacaoAtual.ascendente ? -1 : 1;
+        if (valA > valB) return ordenacaoAtual.ascendente ? 1 : -1;
+        return 0;
+      });
+
+      renderizarTabela(resultado);
     }
 
-    carregarCartoes();
-  </script>
-</body>
-</html>
+    // RENDERIZAR TABELA
+    function renderizarTabela(lista) {
+      const tbody = document.getElementById('tabela-corpo');
+      tbody.innerHTML = '';
+
+      let somaTotalTela = 0;
+
+      if (lista.length === 0) {
+        tbody.innerHTML = '<tr><td colspan="10"
