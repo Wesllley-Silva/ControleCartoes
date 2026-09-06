@@ -1,9 +1,10 @@
+
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Painel Financeiro & Cartões de Crédito</title>
+  <title>Painel Financeiro & Gestão de Faturas</title>
   
   <style>
     :root {
@@ -27,18 +28,45 @@
     
     h1 { text-align: center; margin-bottom: 25px; font-size: 1.8em; color: var(--text-main); font-weight: 700; }
 
-    /* GRID DE CARDS DOS CARTÕES */
-    .cartoes-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 16px; margin-bottom: 25px; }
-    .card-cartao { background: var(--card-bg); border: 1px solid var(--card-border); padding: 18px; border-radius: 12px; box-shadow: 0 4px 12px rgba(0,0,0,0.3); position: relative; }
-    .card-cartao.critico { border-color: var(--accent-red); background: rgba(239, 68, 68, 0.05); }
-    .card-cartao h3 { margin: 0 0 10px 0; font-size: 1.1em; display: flex; justify-content: space-between; align-items: center; }
-    .card-cartao .info { font-size: 0.85em; color: var(--text-muted); margin-bottom: 4px; }
-    .card-cartao .valor { font-size: 1.2em; font-weight: 700; color: var(--accent-green); margin-top: 6px; }
-    .badge-fechada { background: rgba(245, 158, 11, 0.2); color: var(--accent-yellow); border: 1px solid var(--accent-yellow); font-size: 0.7em; padding: 2px 6px; border-radius: 4px; }
+    /* ALERTAS DE VENCIMENTO PRÓXIMO */
+    .alert-box { background: rgba(245, 158, 11, 0.15); border: 1px solid var(--accent-yellow); padding: 14px 20px; border-radius: 10px; margin-bottom: 20px; color: #fde68a; display: none; }
+    .alert-box strong { color: var(--accent-yellow); }
+
+    /* CARDS DE RESUMO FIXOS */
+    .cards-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 16px; margin-bottom: 25px; }
+    .card { background: var(--card-bg); border: 1px solid var(--card-border); padding: 20px; border-radius: 12px; box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3); position: relative; }
+    .card h3 { margin: 0 0 8px 0; font-size: 0.8em; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.5px; }
+    .card p { margin: 0; font-size: 1.5em; font-weight: 700; }
+    .card .subtext { font-size: 0.8em; margin-top: 6px; color: var(--text-muted); }
+    .card.limite p { color: var(--accent-green); }
+    .card.detalhe-limite p { color: var(--accent-blue); }
+    .card.atual p { color: var(--accent-red); }
+    .card.critical { border-color: var(--accent-red); background: rgba(239, 68, 68, 0.08); }
+    .card-badge { position: absolute; top: 12px; right: 12px; font-size: 0.7em; padding: 3px 8px; border-radius: 12px; background: var(--card-border); color: var(--text-main); font-weight: 600; }
+    .card-badge.closed { background: rgba(245, 158, 11, 0.2); color: var(--accent-yellow); border: 1px solid var(--accent-yellow); }
+
+    /* DETALHAMENTO DE CARTÕES COM METER/PORCENTAGEM */
+    .cartoes-detalhe-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 14px; margin-bottom: 25px; }
+    .progress-bar-bg { background: #0f172a; height: 8px; border-radius: 4px; overflow: hidden; margin-top: 8px; }
+    .progress-bar-fill { height: 100%; background: var(--accent-green); transition: width 0.3s; }
+    .progress-bar-fill.critical { background: var(--accent-red); }
+
+    /* PROJEÇÃO MÊS A MÊS E GRÁFICO */
+    .projecao-container { margin-bottom: 25px; }
+    .projecao-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(130px, 1fr)); gap: 12px; }
+    .card-mes { background: var(--card-bg); border: 1px solid var(--card-border); padding: 14px; border-radius: 10px; text-align: center; }
+    .card-mes span { display: block; font-size: 0.75em; color: var(--text-muted); font-weight: 600; text-transform: uppercase; }
+    .card-mes strong { display: block; font-size: 1.1em; color: var(--accent-yellow); margin-top: 5px; font-weight: 700; }
+    
+    /* GRÁFICO SIMPLES EM CSS */
+    .chart-box { display: flex; align-items: flex-end; gap: 12px; height: 120px; padding-top: 20px; border-bottom: 1px solid var(--card-border); margin-bottom: 15px; }
+    .chart-bar-wrap { flex: 1; display: flex; flex-direction: column; align-items: center; height: 100%; justify-content: flex-end; }
+    .chart-bar { width: 100%; max-width: 35px; background: var(--accent-blue); border-radius: 4px 4px 0 0; min-height: 4px; transition: height 0.3s; }
+    .chart-label { font-size: 0.7em; color: var(--text-muted); margin-top: 6px; text-transform: uppercase; }
 
     /* CONTAINERS / CAIXAS */
     .box { background: var(--card-bg); border: 1px solid var(--card-border); padding: 24px; border-radius: 12px; box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3); margin-bottom: 25px; }
-    .box h2 { margin-top: 0; font-size: 1.2em; color: var(--text-main); border-bottom: 1px solid var(--card-border); padding-bottom: 12px; font-weight: 600; }
+    .box h2 { margin-top: 0; font-size: 1.2em; color: var(--text-main); border-bottom: 1px solid var(--card-border); padding-bottom: 12px; font-weight: 600; display: flex; justify-content: space-between; align-items: center; }
     
     /* FORMULÁRIOS */
     form { display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 14px; margin-top: 15px; }
@@ -53,41 +81,43 @@
     .btn-green:hover { background-color: var(--accent-green-hover); }
     .btn-blue { background-color: var(--accent-blue); color: #ffffff; font-weight: 600; border: none; cursor: pointer; }
     .btn-blue:hover { background-color: var(--accent-blue-hover); }
-    .btn-secondary { background-color: #475569; color: #fff; border: none; cursor: pointer; }
-    .btn-secondary:hover { background-color: #334155; }
-    .btn-action { padding: 6px 10px; border-radius: 6px; cursor: pointer; font-size: 0.85em; width: auto; margin-right: 2px; }
-    .btn-edit { background: rgba(59, 130, 246, 0.2); color: var(--accent-blue); border: 1px solid rgba(59, 130, 246, 0.4); }
-    .btn-edit:hover { background: var(--accent-blue); color: #fff; }
-    .btn-delete { background: rgba(239, 68, 68, 0.2); color: var(--accent-red); border: 1px solid rgba(239, 68, 68, 0.4); }
-    .btn-delete:hover { background: var(--accent-red); color: #fff; }
-    .btn-clone { background: rgba(245, 158, 11, 0.2); color: var(--accent-yellow); border: 1px solid rgba(245, 158, 11, 0.4); }
-    .btn-clone:hover { background: var(--accent-yellow); color: #fff; }
+    .btn-gray { background-color: var(--card-border); color: var(--text-main); font-weight: 600; border: none; cursor: pointer; width: auto; padding: 0 16px; }
+    .btn-gray:hover { background-color: #475569; }
+    .btn-edit { background-color: rgba(59, 130, 246, 0.2); color: var(--accent-blue); border: 1px solid rgba(59, 130, 246, 0.4); padding: 6px 8px; border-radius: 6px; cursor: pointer; font-size: 0.85em; width: auto; }
+    .btn-edit:hover { background-color: var(--accent-blue); color: #fff; }
+    .btn-clone { background-color: rgba(139, 92, 246, 0.2); color: var(--accent-purple); border: 1px solid rgba(139, 92, 246, 0.4); padding: 6px 8px; border-radius: 6px; cursor: pointer; font-size: 0.85em; width: auto; }
+    .btn-clone:hover { background-color: var(--accent-purple); color: #fff; }
+    .btn-delete { background-color: rgba(239, 68, 68, 0.2); color: var(--accent-red); border: 1px solid rgba(239, 68, 68, 0.4); padding: 6px 8px; border-radius: 6px; cursor: pointer; font-size: 0.85em; width: auto; }
+    .btn-delete:hover { background-color: var(--accent-red); color: #fff; }
 
-    /* FILTROS E BARRAS DE AÇÃO */
-    .filters-bar { display: grid; grid-template-columns: repeat(auto-fit, minmax(140px, 1fr)); gap: 12px; background: rgba(255, 255, 255, 0.02); padding: 16px; border-radius: 10px; border: 1px solid var(--card-border); margin-bottom: 15px; align-items: end; }
-    .selection-bar { display: flex; justify-content: space-between; align-items: center; background: rgba(59, 130, 246, 0.1); border: 1px solid rgba(59, 130, 246, 0.3); padding: 12px 18px; border-radius: 8px; margin-bottom: 15px; flex-wrap: wrap; gap: 10px; }
-    .selection-info { font-weight: 600; color: var(--accent-blue); font-size: 0.95em; }
+    /* BARRA DE FILTRO E CONTADORES */
+    .fatura-actions { display: flex; gap: 12px; align-items: flex-end; flex-wrap: wrap; background: rgba(255, 255, 255, 0.03); padding: 16px; border-radius: 10px; border: 1px solid var(--card-border); margin-bottom: 15px; }
+    .fatura-actions .field { flex: 1; min-width: 150px; }
+    
+    .selection-counter-bar { background: rgba(59, 130, 246, 0.15); border: 1px solid rgba(59, 130, 246, 0.4); padding: 12px 18px; border-radius: 8px; margin-bottom: 15px; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 10px; }
+    .selection-counter-bar strong { color: var(--accent-blue); font-size: 1.1em; }
 
     /* TABELA */
     .table-responsive { overflow-x: auto; }
     table { width: 100%; border-collapse: collapse; margin-top: 10px; }
-    th, td { border-bottom: 1px solid var(--card-border); padding: 12px; text-align: left; font-size: 0.88em; }
-    th { background-color: rgba(255, 255, 255, 0.03); color: var(--text-muted); font-weight: 600; cursor: pointer; user-select: none; }
-    th:hover { color: var(--text-main); }
-    tr:hover { background-color: rgba(255, 255, 255, 0.02); }
+    th, td { border-bottom: 1px solid var(--card-border); padding: 12px; text-align: left; font-size: 0.9em; }
+    th { background-color: rgba(255, 255, 255, 0.02); color: var(--text-muted); font-weight: 600; cursor: pointer; user-select: none; }
+    th:hover { color: var(--accent-blue); }
+    tr.clickable-row { cursor: pointer; }
+    tr.clickable-row:hover { background-color: rgba(255, 255, 255, 0.03); }
+    tr.selected-row { background-color: rgba(59, 130, 246, 0.1) !important; }
+    
     input[type="checkbox"] { width: 18px; height: 18px; cursor: pointer; accent-color: var(--accent-blue); }
 
     /* BADGES */
-    .badge { padding: 3px 8px; border-radius: 12px; font-size: 0.75em; font-weight: 700; text-transform: uppercase; }
+    .badge { padding: 4px 8px; border-radius: 20px; font-size: 0.75em; font-weight: 700; text-transform: uppercase; }
     .badge-pago { background: rgba(16, 185, 129, 0.15); color: var(--accent-green); border: 1px solid rgba(16, 185, 129, 0.3); }
     .badge-pendente { background: rgba(239, 68, 68, 0.15); color: var(--accent-red); border: 1px solid rgba(239, 68, 68, 0.3); }
-    
-    .badge-tipo-cartao { background: rgba(59, 130, 246, 0.15); color: var(--accent-blue); border: 1px solid rgba(59, 130, 246, 0.3); }
-    .badge-tipo-fixa { background: rgba(139, 92, 246, 0.15); color: var(--accent-purple); border: 1px solid rgba(139, 92, 246, 0.3); }
+    .badge-tipo { background: rgba(139, 92, 246, 0.15); color: var(--accent-purple); border: 1px solid rgba(139, 92, 246, 0.3); margin-left: 4px; }
 
-    /* MODAL */
+    /* MODAL DE EDIÇÃO */
     .modal-overlay { position: fixed; top:0; left:0; width:100%; height:100%; background: rgba(0,0,0,0.7); display:none; justify-content:center; align-items:center; z-index:1000; }
-    .modal { background: var(--card-bg); padding: 25px; border-radius: 12px; border: 1px solid var(--card-border); width: 90%; max-width: 600px; max-height: 90vh; overflow-y: auto; }
+    .modal { background: var(--card-bg); padding: 25px; border-radius: 12px; border: 1px solid var(--card-border); width: 90%; max-width: 500px; }
   </style>
 
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
@@ -95,127 +125,172 @@
 <body>
 
   <div class="container">
-    <h1>💳 Painel Financeiro & Contas</h1>
+    <h1>💳 Dashboard Financeiro & Gestão de Faturas</h1>
 
-    <!-- PAINEL RESUMO DE CARTÕES E LIMITES -->
-    <div class="box">
-      <h2>📊 Resumo dos Cartões & Limites</h2>
-      <div class="cartoes-grid" id="container-cartoes-resumo">
-        <!-- Renderizado via JS -->
+    <!-- CAIXA DE ALERTAS DE VENCIMENTO PRÓXIMO -->
+    <div class="alert-box" id="alert-vencimento">
+      <strong>⚠️ Alerta de Vencimento Próximo:</strong>
+      <span id="alert-mensagem"></span>
+    </div>
+
+    <!-- CARDS DE RESUMO PRINCIPAIS -->
+    <div class="cards-grid">
+      <div class="card limite">
+        <h3>Limite Disponível Global</h3>
+        <p id="resumo-limite">R$ 0,00</p>
+        <div class="subtext" id="subtext-limite-total">Total Cadastrado: R$ 0,00</div>
+      </div>
+      <div class="card detalhe-limite">
+        <h3 id="titulo-limite-cartao">Limite Disponível (Filtro)</h3>
+        <p id="resumo-limite-cartao">R$ 0,00</p>
+        <div class="subtext" id="subtext-limite-filtro">Total do Cartão: R$ 0,00</div>
+      </div>
+      <div class="card atual">
+        <h3>Fatura do Mês Atual</h3>
+        <p id="resumo-fatura-atual">R$ 0,00</p>
+        <div class="subtext" id="subtext-quitacao">Projeção de Quitação: -</div>
       </div>
     </div>
 
-    <!-- FORMULÁRIO: NOVA COMPRA / CONTA -->
+    <!-- DETALHAMENTO DE CADA CARTÃO DE CRÉDITO -->
     <div class="box">
-      <h2>+ Lançar Nova Compra / Conta</h2>
+      <h2>💳 Status Detalhado dos Cartões <span id="info-quitacao-geral" style="font-size:0.7em; color:var(--text-muted); font-weight:400;"></span></h2>
+      <div class="cartoes-detalhe-grid" id="container-status-cartoes">
+        <!-- Renderizado dinamicamente -->
+      </div>
+    </div>
+
+    <!-- PROJEÇÃO DETALHADA E GRÁFICO DOS PRÓXIMOS 6 MESES -->
+    <div class="box projecao-container">
+      <h2>📅 Planejamento de Faturas (Próximos 6 Meses)</h2>
+      
+      <!-- Gráfico Visual de Barras -->
+      <div class="chart-box" id="chart-projecao">
+        <!-- Gerado via JavaScript -->
+      </div>
+
+      <div class="projecao-grid" id="container-projecao">
+        <!-- Gerado via JavaScript -->
+      </div>
+    </div>
+
+    <!-- FORMULÁRIO: NOVA COMPRA OU DESPESA FIXA -->
+    <div class="box">
+      <h2>+ Lançar Nova Compra ou Conta Fixa</h2>
       <form id="form-compra">
         <div>
-          <label>Tipo de Despesa</label>
-          <select id="t-tipo" required>
-            <option value="Cartão">💳 Compra no Cartão</option>
-            <option value="Conta Fixa">🏠 Conta Fixa / Boleto / Pix</option>
+          <label>Tipo de Lançamento</label>
+          <select id="t-tipo" onchange="alternarTipoForm()">
+            <option value="CARTAO">💳 Cartão de Crédito</option>
+            <option value="FIXA">🔌 Conta Fixa / Boleto (Água, Luz, etc)</option>
           </select>
         </div>
         <div>
           <label>Descrição</label>
-          <input type="text" id="t-descricao" placeholder="Ex: Mercado, Netflix, Luz" required>
+          <input type="text" id="t-descricao" placeholder="Ex: Mercado, Conta de Luz" required>
         </div>
         <div>
           <label>Valor Total (R$)</label>
-          <input type="number" id="t-valor" step="0.01" placeholder="Ex: 250.00" required>
+          <input type="number" id="t-valor" step="0.01" placeholder="Ex: 300.00" required>
         </div>
         <div>
           <label>Data da Compra / Emissão</label>
           <input type="date" id="t-data" required>
         </div>
-        <div>
-          <label>Cartão / Forma de Pagamento</label>
-          <select id="t-cartao"></select>
-          <small style="font-size: 0.7em; color: var(--text-muted);">Pode deixar vazio se for dinheiro/PIX</small>
+        <div id="wrapper-cartao">
+          <label>Cartão</label>
+          <select id="t-cartao">
+            <option value="">Selecione...</option>
+          </select>
         </div>
-        <div>
+        <div id="wrapper-parcelas">
           <label>Nº de Parcelas</label>
-          <input type="number" id="t-parcelas" value="1" min="1" required>
+          <input type="number" id="t-parcelas" value="1" min="1">
         </div>
         <div>
-          <label>Mês Vencimento (1ª Parcela)</label>
+          <label>Vencimento Fatura/Conta (Mês/Ano)</label>
           <input type="month" id="t-primeiro-vencimento" required>
         </div>
         <div class="full-width">
-          <button type="submit" class="btn-green">➕ Lançar Compra / Conta</button>
+          <button type="submit" class="btn-green">Lançar Registro Financeiro</button>
         </div>
       </form>
     </div>
 
-    <!-- TABELA E GESTÃO DE LANÇAMENTOS -->
+    <!-- HISTÓRICO E GESTÃO DE FATURAS COM FILTROS -->
     <div class="box">
-      <h2>📋 Detalhamento de Faturas e Contas</h2>
-
-      <!-- PAINEL DE FILTROS -->
-      <div class="filters-bar">
-        <div>
-          <label>Tipo:</label>
-          <select id="f-tipo" onchange="aplicarFiltros()">
-            <option value="TODOS">Todos</option>
-            <option value="Cartão">Apenas Cartões</option>
-            <option value="Conta Fixa">Apenas Contas Fixas</option>
+      <h2>
+        <span>📋 Detalhamento das Compras e Faturas</span>
+        <span style="font-size: 0.75em; color: var(--accent-yellow);" id="total-exibido-filtro">Total Exibido: R$ 0,00</span>
+      </h2>
+      
+      <!-- BARRA DE FILTROS -->
+      <div class="fatura-actions">
+        <div class="field">
+          <label>Filtrar Cartão/Origem:</label>
+          <select id="filtro-cartao" onchange="carregarDados()">
+            <option value="TODOS">Todos os Cartões/Contas</option>
           </select>
         </div>
-        <div>
-          <label>Filtrar Cartão:</label>
-          <select id="f-cartao" onchange="aplicarFiltros()"></select>
+        <div class="field">
+          <label>Mês Vencimento:</label>
+          <input type="month" id="filtro-mes-vencimento" onchange="carregarDados()">
         </div>
-        <div>
-          <label>Mês do Vencimento:</label>
-          <input type="month" id="f-mes" onchange="aplicarFiltros()">
-        </div>
-        <div>
+        <div class="field">
           <label>Status:</label>
-          <select id="f-status" onchange="aplicarFiltros()">
+          <select id="filtro-status" onchange="carregarDados()">
             <option value="TODOS">Todos os Status</option>
             <option value="PENDENTE" selected>Apenas PENDENTES</option>
             <option value="PAGO">Apenas PAGOS</option>
           </select>
         </div>
+        <div class="field">
+          <label>Tipo:</label>
+          <select id="filtro-tipo" onchange="carregarDados()">
+            <option value="TODOS">Todos os Tipos</option>
+            <option value="CARTAO">Cartão de Crédito</option>
+            <option value="FIXA">Contas Fixas / Boletos</option>
+          </select>
+        </div>
         <div>
-          <button type="button" class="btn-secondary" onclick="limparFiltros()">🧹 Limpar</button>
+          <button type="button" class="btn-gray" onclick="limparFiltros()">🔄 Limpar Filtros</button>
         </div>
       </div>
 
-      <!-- BARRA DE SELEÇÃO E PAGAMENTO EM LOTE -->
-      <div class="selection-bar">
-        <div class="selection-info">
-          <span id="txt-contador-selecao">0 itens marcados (R$ 0,00)</span>
-          <br><small style="color: var(--text-muted);" id="txt-total-exibido">Total exibido na tela: R$ 0,00</small>
+      <!-- PAINEL EM TEMPO REAL DE SELEÇÃO -->
+      <div class="selection-counter-bar">
+        <div>
+          📌 Marcados: <strong id="cnt-marcados">0 compras</strong> | Soma: <strong id="soma-marcados">R$ 0,00</strong>
         </div>
-        <button type="button" class="btn-green" style="width: auto; padding: 10px 20px;" onclick="pagarItensSelecionados()">✅ Pagar Selecionados</button>
+        <div>
+          <button type="button" class="btn-green" style="width:auto; padding: 8px 16px;" onclick="pagarMarcados()">✅ Pagar Selecionados</button>
+        </div>
       </div>
 
-      <!-- TABELA COM ORDENAÇÃO -->
+      <!-- TABELA DE TRANSAÇÕES -->
       <div class="table-responsive">
         <table>
           <thead>
             <tr>
-              <th style="width: 30px;"><input type="checkbox" id="chk-marcar-todos" onchange="marcarTodosCheckboxes(this)"></th>
-              <th onclick="ordenarTabela('Tipo')">Tipo ↕</th>
-              <th onclick="ordenarTabela('Data')">Data ↕</th>
-              <th onclick="ordenarTabela('Descricao')">Descrição ↕</th>
-              <th onclick="ordenarTabela('Cartao')">Forma Pagto ↕</th>
-              <th onclick="ordenarTabela('Parcelas')">Parc. ↕</th>
-              <th onclick="ordenarTabela('Vencimento')">Vencimento ↕</th>
-              <th onclick="ordenarTabela('Valor')">Valor ↕</th>
-              <th onclick="ordenarTabela('Status')">Status ↕</th>
-              <th>Ações</th>
+              <th style="width: 40px;"><input type="checkbox" id="check-all" onchange="toggleSelectAll(this)"></th>
+              <th onclick="ordenarTabela('Data')">Data Compra ⇕</th>
+              <th onclick="ordenarTabela('Descricao')">Descrição ⇕</th>
+              <th onclick="ordenarTabela('Cartao')">Cartão / Origem ⇕</th>
+              <th>Parcela</th>
+              <th onclick="ordenarTabela('Vencimento')">Venc. Fatura ⇕</th>
+              <th onclick="ordenarTabela('Valor')">Valor Parcela ⇕</th>
+              <th>Status</th>
+              <th style="text-align: center;">Ações</th>
             </tr>
           </thead>
           <tbody id="tabela-corpo">
-            <tr><td colspan="10" style="text-align:center; color: var(--text-muted);">Carregando dados...</td></tr>
+            <tr><td colspan="9" style="text-align:center; color: var(--text-muted);">Carregando dados...</td></tr>
           </tbody>
         </table>
       </div>
     </div>
 
-    <!-- FORMULÁRIO: CADASTRAR/EDITAR CARTÃO (NO FINAL) -->
+    <!-- SEÇÃO MOVIDA PARA O FINAL DA TELA: CADASTRAR/EDITAR CARTÃO -->
     <div class="box">
       <h2>⚙️ Cadastrar ou Atualizar Limite de Cartão</h2>
       <form id="form-cartao">
@@ -228,22 +303,22 @@
           <input type="number" id="c-limite" step="0.01" placeholder="Ex: 10790.00" required>
         </div>
         <div>
-          <label>Dia Fechamento</label>
+          <label>Dia Fechamento Fatura</label>
           <input type="number" id="c-fechamento" min="1" max="31" placeholder="Ex: 22" required>
         </div>
         <div>
-          <label>Dia Vencimento</label>
+          <label>Dia Vencimento Fatura</label>
           <input type="number" id="c-vencimento" min="1" max="31" placeholder="Ex: 28" required>
         </div>
         <div class="full-width">
-          <button type="submit" class="btn-blue">💾 Salvar / Atualizar Configuração do Cartão</button>
+          <button type="submit" class="btn-blue">Salvar / Atualizar Limite do Cartão</button>
         </div>
       </form>
     </div>
 
   </div>
 
-  <!-- MODAL DE EDIÇÃO -->
+  <!-- MODAL PARA EDITAR TRANSAÇÃO -->
   <div class="modal-overlay" id="modal-editar">
     <div class="modal">
       <h2>✏️ Editar Lançamento</h2>
@@ -251,9 +326,9 @@
         <input type="hidden" id="edit-id">
         <div>
           <label>Tipo</label>
-          <select id="edit-tipo" required>
-            <option value="Cartão">Cartão</option>
-            <option value="Conta Fixa">Conta Fixa</option>
+          <select id="edit-tipo">
+            <option value="CARTAO">Cartão de Crédito</option>
+            <option value="FIXA">Conta Fixa / Boleto</option>
           </select>
         </div>
         <div>
@@ -265,7 +340,7 @@
           <input type="number" id="edit-valor" step="0.01" required>
         </div>
         <div>
-          <label>Data da Compra / Emissão</label>
+          <label>Data da Compra</label>
           <input type="date" id="edit-data" required>
         </div>
         <div>
@@ -273,8 +348,8 @@
           <input type="date" id="edit-vencimento" required>
         </div>
         <div>
-          <label>Forma Pagamento / Cartão</label>
-          <select id="edit-cartao"></select>
+          <label>Cartão / Origem</label>
+          <input type="text" id="edit-cartao" required>
         </div>
         <div>
           <label>Status</label>
@@ -285,7 +360,7 @@
         </div>
         <div class="full-width" style="display:flex; gap:10px; margin-top:10px;">
           <button type="submit" class="btn-blue">Salvar Alterações</button>
-          <button type="button" class="btn-secondary" onclick="fecharModalEdit()">Cancelar</button>
+          <button type="button" class="btn-delete" onclick="fecharModalEdit()">Cancelar</button>
         </div>
       </form>
     </div>
@@ -296,262 +371,101 @@
     const SUPABASE_KEY = 'sb_publishable_8-eWESul1nNUDuFz6P1S9w_BlJDLu-i';
     const supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
 
-    let dadosGlobaisTransacoes = [];
-    let dadosGlobaisCartoes = [];
-    let ordenacaoAtual = { coluna: 'Vencimento', ascendente: true };
-
-    const hoje = new Date();
-    document.getElementById('t-data').valueAsDate = hoje;
-    const mesAnoAtualStr = `${hoje.getFullYear()}-${String(hoje.getMonth() + 1).padStart(2, '0')}`;
+    const hojePadrao = new Date();
+    document.getElementById('t-data').valueAsDate = hojePadrao;
+    const mesAnoAtualStr = `${hojePadrao.getFullYear()}-${String(hojePadrao.getMonth() + 1).padStart(2, '0')}`;
     document.getElementById('t-primeiro-vencimento').value = mesAnoAtualStr;
-    document.getElementById('f-mes').value = mesAnoAtualStr;
+    document.getElementById('filtro-mes-vencimento').value = mesAnoAtualStr;
 
-    // INICIALIZAÇÃO
-    async function inicializar() {
-      await carregarCartoes();
-      await carregarTransacoes();
+    let dadosTransacoesCache = [];
+    let ordenacaoAtual = { coluna: 'Vencimento', asc: true };
+    let idsSelecionados = new Set();
+
+    // ALTERNAR TIPO NO FORMULÁRIO
+    function alternarTipoForm() {
+      const tipo = document.getElementById('t-tipo').value;
+      const wrapCartao = document.getElementById('wrapper-cartao');
+      const wrapParcelas = document.getElementById('wrapper-parcelas');
+      
+      if (tipo === 'FIXA') {
+        wrapCartao.style.display = 'none';
+        wrapParcelas.style.display = 'none';
+        document.getElementById('t-cartao').required = false;
+      } else {
+        wrapCartao.style.display = 'block';
+        wrapParcelas.style.display = 'block';
+        document.getElementById('t-cartao').required = true;
+      }
     }
+
+    // CADASTRAR OU ATUALIZAR CARTÃO
+    document.getElementById('form-cartao').addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const nome = document.getElementById('c-nome').value.toUpperCase();
+      const limite = parseFloat(document.getElementById('c-limite').value);
+      const fechamento = parseInt(document.getElementById('c-fechamento').value);
+      const vencimento = parseInt(document.getElementById('c-vencimento').value);
+
+      const { data: existente } = await supabaseClient.from('cartoes').select('*').eq('nome', nome).single();
+
+      if (existente) {
+        const { error } = await supabaseClient.from('cartoes').update({
+          limite, dia_fechamento: fechamento, dia_vencimento: vencimento
+        }).eq('id', existente.id);
+        if (error) alert('Erro ao atualizar cartão: ' + error.message);
+        else alert('Limite e dados do cartão atualizados com sucesso!');
+      } else {
+        const { error } = await supabaseClient.from('cartoes').insert([{
+          nome, limite, dia_fechamento: fechamento, dia_vencimento: vencimento
+        }]);
+        if (error) alert('Erro ao cadastrar cartão: ' + error.message);
+        else alert('Cartão cadastrado com sucesso!');
+      }
+
+      document.getElementById('form-cartao').reset();
+      carregarCartoes();
+    });
 
     // CARREGAR CARTÕES
     async function carregarCartoes() {
       const { data } = await supabaseClient.from('cartoes').select('*');
-      dadosGlobaisCartoes = data || [];
-
       const selectCompra = document.getElementById('t-cartao');
-      const selectFiltro = document.getElementById('f-cartao');
-      const selectEdit = document.getElementById('edit-cartao');
+      const selectFiltro = document.getElementById('filtro-cartao');
+      
+      const valorFiltroAtual = selectFiltro.value || 'TODOS';
 
-      selectCompra.innerHTML = '<option value="">Sem Cartão (Boleto/Pix)</option>';
-      selectFiltro.innerHTML = '<option value="TODOS">Todos os Cartões/Formas</option><option value="">Sem Cartão</option>';
-      selectEdit.innerHTML = '<option value="">Sem Cartão (Boleto/Pix)</option>';
+      selectCompra.innerHTML = '<option value="">Selecione...</option>';
+      selectFiltro.innerHTML = '<option value="TODOS">Todos os Cartões/Contas</option>';
 
-      dadosGlobaisCartoes.forEach(c => {
-        selectCompra.innerHTML += `<option value="${c.nome}">${c.nome}</option>`;
-        selectFiltro.innerHTML += `<option value="${c.nome}">${c.nome}</option>`;
-        selectEdit.innerHTML += `<option value="${c.nome}">${c.nome}</option>`;
-      });
-    }
-
-    // CARREGAR TRANSAÇÕES
-    async function carregarTransacoes() {
-      const { data } = await supabaseClient.from('transacoes').select('*');
-      dadosGlobaisTransacoes = data || [];
-      renderizarPainelCartoes();
-      aplicarFiltros();
-    }
-
-    // RENDERIZAR CARDS DOS CARTÕES
-    function renderizarPainelCartoes() {
-      const container = document.getElementById('container-cartoes-resumo');
-      container.innerHTML = '';
-
-      const diaHoje = hoje.getDate();
-
-      dadosGlobaisCartoes.forEach(c => {
-        // MUITO IMPORTANTE: Exclui da conta do limite os lançamentos classificados como "Conta Fixa"
-        const transacoesDoCartao = dadosGlobaisTransacoes.filter(t => t.Cartao === c.nome && !t.Status && t.Tipo !== 'Conta Fixa');
-        
-        const totalPendente = transacoesDoCartao.reduce((acc, cur) => acc + (cur.Valor || 0), 0);
-        const disponivel = Math.max(0, c.limite - totalPendente);
-        const pctUso = c.limite > 0 ? ((totalPendente / c.limite) * 100).toFixed(1) : 0;
-        const isCritico = pctUso >= 80;
-        const isFechada = diaHoje >= c.dia_fechamento;
-
-        container.innerHTML += `
-          <div class="card-cartao ${isCritico ? 'critico' : ''}">
-            <h3>
-              ${c.nome}
-              ${isFechada ? '<span class="badge-fechada">🔒 Fatura Fechada</span>' : ''}
-            </h3>
-            <div class="info">Limite Total: <strong>${c.limite.toLocaleString('pt-BR', {style:'currency', currency:'BRL'})}</strong></div>
-            <div class="info">Comprometido: <strong>${totalPendente.toLocaleString('pt-BR', {style:'currency', currency:'BRL'})} (${pctUso}%)</strong></div>
-            <div class="valor">Disp: ${disponivel.toLocaleString('pt-BR', {style:'currency', currency:'BRL'})}</div>
-          </div>
-        `;
-      });
-    }
-
-    // APLICAR FILTROS E ORDENAÇÃO NA TABELA
-    function aplicarFiltros() {
-      const filtroTipo = document.getElementById('f-tipo').value;
-      const filtroCartao = document.getElementById('f-cartao').value;
-      const filtroMes = document.getElementById('f-mes').value;
-      const filtroStatus = document.getElementById('f-status').value;
-
-      let resultado = dadosGlobaisTransacoes.filter(t => {
-        const tipoT = t.Tipo || 'Cartão'; // fallback caso haja antigos sem tipo
-        const matchTipo = (filtroTipo === 'TODOS' || tipoT === filtroTipo);
-        
-        // Match cartão lida com o caso de estarem vazios (Sem Cartão)
-        const cartaoT = t.Cartao || '';
-        const matchCartao = (filtroCartao === 'TODOS' || cartaoT === filtroCartao);
-        
-        const matchStatus = (filtroStatus === 'TODOS') || 
-                            (filtroStatus === 'PENDENTE' && !t.Status) || 
-                            (filtroStatus === 'PAGO' && t.Status);
-        
-        let matchMes = true;
-        if (filtroMes && t.Vencimento) {
-          matchMes = t.Vencimento.startsWith(filtroMes);
-        }
-
-        return matchTipo && matchCartao && matchStatus && matchMes;
-      });
-
-      // Ordenação
-      resultado.sort((a, b) => {
-        let valA = a[ordenacaoAtual.coluna] || '';
-        let valB = b[ordenacaoAtual.coluna] || '';
-
-        if (typeof valA === 'string') valA = valA.toLowerCase();
-        if (typeof valB === 'string') valB = valB.toLowerCase();
-
-        if (valA < valB) return ordenacaoAtual.ascendente ? -1 : 1;
-        if (valA > valB) return ordenacaoAtual.ascendente ? 1 : -1;
-        return 0;
-      });
-
-      renderizarTabela(resultado);
-    }
-
-    // RENDERIZAR TABELA
-    function renderizarTabela(lista) {
-      const tbody = document.getElementById('tabela-corpo');
-      tbody.innerHTML = '';
-
-      let somaTotalTela = 0;
-
-      if (lista.length === 0) {
-        tbody.innerHTML = '<tr><td colspan="10" style="text-align:center; color: var(--text-muted);">Nenhum lançamento encontrado.</td></tr>';
-      } else {
-        lista.forEach(t => {
-          somaTotalTela += (t.Valor || 0);
-          const tipoFinal = t.Tipo || 'Cartão';
-          const badgeTipo = tipoFinal === 'Conta Fixa' ? 'badge-tipo-fixa' : 'badge-tipo-cartao';
-          
-          tbody.innerHTML += `
-            <tr>
-              <td><input type="checkbox" class="chk-item" data-id="${t.id}" data-valor="${t.Valor}" onchange="atualizarContadorSelecao()"></td>
-              <td><span class="badge ${badgeTipo}">${tipoFinal}</span></td>
-              <td>${t.Data ? t.Data.split('-').reverse().join('/') : '-'}</td>
-              <td>${t.Descricao}</td>
-              <td><strong>${t.Cartao || '-'}</strong></td>
-              <td>${t.Parcelas || 1}x</td>
-              <td>${t.Vencimento ? t.Vencimento.split('-').reverse().join('/') : '-'}</td>
-              <td><strong>${t.Valor ? t.Valor.toLocaleString('pt-BR', {style:'currency', currency:'BRL'}) : 'R$ 0,00'}</strong></td>
-              <td><span class="badge ${t.Status ? 'badge-pago' : 'badge-pendente'}">${t.Status ? 'PAGO' : 'PENDENTE'}</span></td>
-              <td>
-                <button class="btn-action btn-edit" onclick='abrirModalEdit(${JSON.stringify(t)})' title="Editar">✏️</button>
-                <button class="btn-action btn-clone" onclick='duplicarLancamento(${JSON.stringify(t)})' title="Duplicar">📋</button>
-                <button class="btn-action btn-delete" onclick="excluirTransacao(${t.id})" title="Excluir">🗑️</button>
-              </td>
-            </tr>
-          `;
+      if (data) {
+        data.forEach(c => {
+          selectCompra.innerHTML += `<option value="${c.nome}">${c.nome}</option>`;
+          selectFiltro.innerHTML += `<option value="${c.nome}">${c.nome}</option>`;
         });
       }
-
-      document.getElementById('txt-total-exibido').textContent = `Total exibido na tela: ${somaTotalTela.toLocaleString('pt-BR', {style:'currency', currency:'BRL'})}`;
-      atualizarContadorSelecao();
+      selectFiltro.value = valorFiltroAtual;
+      carregarDados();
     }
 
-    // CONTADOR DE SELEÇÃO EM TEMPO REAL
-    function atualizarContadorSelecao() {
-      const checkboxes = document.querySelectorAll('.chk-item:checked');
-      let qtd = checkboxes.length;
-      let soma = 0;
-
-      checkboxes.forEach(chk => {
-        soma += parseFloat(chk.getAttribute('data-valor') || 0);
-      });
-
-      document.getElementById('txt-contador-selecao').textContent = `${qtd} itens marcados (${soma.toLocaleString('pt-BR', {style:'currency', currency:'BRL'})})`;
-    }
-
-    function marcarTodosCheckboxes(master) {
-      const checkboxes = document.querySelectorAll('.chk-item');
-      checkboxes.forEach(chk => chk.checked = master.checked);
-      atualizarContadorSelecao();
-    }
-
-    // PAGAR ITENS SELECIONADOS VIA CHECKBOX
-    async function pagarItensSelecionados() {
-      const checkboxes = document.querySelectorAll('.chk-item:checked');
-      if (checkboxes.length === 0) {
-        alert('Selecione ao menos um item marcando a caixinha ao lado para pagar.');
-        return;
-      }
-
-      let ids = [];
-      let total = 0;
-      checkboxes.forEach(chk => {
-        ids.push(parseInt(chk.getAttribute('data-id')));
-        total += parseFloat(chk.getAttribute('data-valor') || 0);
-      });
-
-      const confirmou = confirm(`⚠️ Confirmar Pagamento?\n\nVocê selecionou ${ids.length} compra(s)\nValor Total: ${total.toLocaleString('pt-BR', {style:'currency', currency:'BRL'})}\n\nDeseja alterar o status para PAGO?`);
-
-      if (confirmou) {
-        const { error } = await supabaseClient
-          .from('transacoes')
-          .update({ Status: true })
-          .in('id', ids);
-
-        if (error) alert('Erro ao atualizar: ' + error.message);
-        else {
-          alert('Pagamento registrado com sucesso!');
-          document.getElementById('chk-marcar-todos').checked = false;
-          carregarTransacoes();
-        }
-      }
-    }
-
-    // LIMPAR FILTROS
-    function limparFiltros() {
-      document.getElementById('f-tipo').value = 'TODOS';
-      document.getElementById('f-cartao').value = 'TODOS';
-      document.getElementById('f-mes').value = '';
-      document.getElementById('f-status').value = 'TODOS';
-      aplicarFiltros();
-    }
-
-    // ORDENAR COLUNAS
-    function ordenarTabela(coluna) {
-      if (ordenacaoAtual.coluna === coluna) {
-        ordenacaoAtual.ascendente = !ordenacaoAtual.ascendente;
-      } else {
-        ordenacaoAtual.coluna = coluna;
-        ordenacaoAtual.ascendente = true;
-      }
-      aplicarFiltros();
-    }
-
-    // DUPLICAR LANÇAMENTO
-    function duplicarLancamento(t) {
-      document.getElementById('t-tipo').value = t.Tipo || 'Cartão';
-      document.getElementById('t-descricao').value = t.Descricao + ' (Cópia)';
-      document.getElementById('t-valor').value = t.Valor;
-      document.getElementById('t-cartao').value = t.Cartao || '';
-      document.getElementById('t-parcelas').value = 1;
-      window.scrollTo({ top: 300, behavior: 'smooth' });
-    }
-
-    // CADASTRAR NOVA COMPRA / CONTA
+    // LANÇAR COMPRA OU CONTA FIXA
     document.getElementById('form-compra').addEventListener('submit', async (e) => {
       e.preventDefault();
       const tipo = document.getElementById('t-tipo').value;
       const descricao = document.getElementById('t-descricao').value;
       const valorTotal = parseFloat(document.getElementById('t-valor').value);
       const dataCompraStr = document.getElementById('t-data').value;
-      const nomeCartao = document.getElementById('t-cartao').value;
-      const totalParcelas = parseInt(document.getElementById('t-parcelas').value);
+      const nomeCartao = tipo === 'CARTAO' ? document.getElementById('t-cartao').value : 'CONTA FIXA';
+      const totalParcelas = tipo === 'CARTAO' ? parseInt(document.getElementById('t-parcelas').value) : 1;
       const primeiroVencStr = document.getElementById('t-primeiro-vencimento').value;
 
       const [anoInicio, mesInicio] = primeiroVencStr.split('-').map(Number);
-      
-      let diaVenc = 5; // Padrão se não tiver cartão
-      if (nomeCartao) {
-        const cartaoData = dadosGlobaisCartoes.find(c => c.nome === nomeCartao);
+      let diaVenc = 5;
+
+      if (tipo === 'CARTAO') {
+        const { data: cartaoData } = await supabaseClient.from('cartoes').select('*').eq('nome', nomeCartao).single();
         if (cartaoData) diaVenc = cartaoData.dia_vencimento;
+      } else {
+        diaVenc = parseInt(dataCompraStr.split('-')[2]) || 10;
       }
 
       const valorParcela = valorTotal / totalParcelas;
@@ -564,65 +478,410 @@
         const dia = String(dataVenc.getDate()).padStart(2, '0');
 
         lancamentos.push({
-          Tipo: tipo,
           Descricao: totalParcelas > 1 ? `${descricao} (${i + 1}/${totalParcelas})` : descricao,
           Valor: valorParcela,
           Data: dataCompraStr,
           Vencimento: `${ano}-${mes}-${dia}`,
           Cartao: nomeCartao,
           Parcelas: totalParcelas,
-          Status: false
+          Status: false,
+          Tipo: tipo
         });
       }
 
       const { error } = await supabaseClient.from('transacoes').insert(lancamentos);
-      if (error) alert('Erro ao salvar: ' + error.message);
+      if (error) alert('Erro ao salvar compras: ' + error.message);
       else {
-        alert('Lançamento cadastrado com sucesso!');
+        alert('Lançamento realizado com sucesso!');
         document.getElementById('form-compra').reset();
         document.getElementById('t-data').valueAsDate = new Date();
         document.getElementById('t-primeiro-vencimento').value = mesAnoAtualStr;
-        carregarTransacoes();
+        alternarTipoForm();
+        carregarDados();
       }
     });
 
-    // CADASTRAR/EDITAR CARTÃO
-    document.getElementById('form-cartao').addEventListener('submit', async (e) => {
-      e.preventDefault();
-      const nome = document.getElementById('c-nome').value.toUpperCase();
-      const limite = parseFloat(document.getElementById('c-limite').value);
-      const fechamento = parseInt(document.getElementById('c-fechamento').value);
-      const vencimento = parseInt(document.getElementById('c-vencimento').value);
+    // LIMPAR FILTROS
+    function limparFiltros() {
+      document.getElementById('filtro-cartao').value = 'TODOS';
+      document.getElementById('filtro-mes-vencimento').value = '';
+      document.getElementById('filtro-status').value = 'TODOS';
+      document.getElementById('filtro-tipo').value = 'TODOS';
+      carregarDados();
+    }
 
-      const existente = dadosGlobaisCartoes.find(c => c.nome === nome);
-
-      if (existente) {
-        const { error } = await supabaseClient.from('cartoes').update({
-          limite, dia_fechamento: fechamento, dia_vencimento: vencimento
-        }).eq('id', existente.id);
-        if (error) alert('Erro ao atualizar: ' + error.message);
-        else alert('Cartão atualizado com sucesso!');
+    // ORDENAR TABELA
+    function ordenarTabela(coluna) {
+      if (ordenacaoAtual.coluna === coluna) {
+        ordenacaoAtual.asc = !ordenacaoAtual.asc;
       } else {
-        const { error } = await supabaseClient.from('cartoes').insert([{
-          nome, limite, dia_fechamento: fechamento, dia_vencimento: vencimento
-        }]);
-        if (error) alert('Erro ao cadastrar: ' + error.message);
-        else alert('Cartão cadastrado com sucesso!');
+        ordenacaoAtual.coluna = coluna;
+        ordenacaoAtual.asc = true;
+      }
+      renderizarTabela();
+    }
+
+    // CARREGAR DADOS COMPLETOS E CALCULAR
+    async function carregarDados() {
+      const { data: todasTransacoes } = await supabaseClient.from('transacoes').select('*');
+      const { data: cartoes } = await supabaseClient.from('cartoes').select('*');
+
+      dadosTransacoesCache = todasTransacoes || [];
+
+      // CÁLCULOS GERAIS
+      let limiteGlobalTotal = 0;
+      let pendenteGlobalTotal = 0;
+      let pendenteCartaoFiltro = 0;
+      let limiteCartaoFiltro = 0;
+      let faturaMesAtualSum = 0;
+
+      const hoje = new Date();
+      const mesAtualIdx = hoje.getMonth();
+      const anoAtualIdx = hoje.getFullYear();
+      let alertaVencimentos = [];
+      let dataUltimoVencimento = new Date(0);
+
+      // Mapa de cartões
+      let mapaCartoes = {};
+      if (cartoes) {
+        cartoes.forEach(c => {
+          limiteGlobalTotal += c.limite;
+          mapaCartoes[c.nome] = {
+            limite: c.limite,
+            fechamento: c.dia_fechamento,
+            vencimento: c.dia_vencimento,
+            comprometido: 0
+          };
+        });
       }
 
-      document.getElementById('form-cartao').reset();
-      inicializar();
-    });
+      const filtroCartao = document.getElementById('filtro-cartao').value;
+      if (mapaCartoes[filtroCartao]) {
+        limiteCartaoFiltro = mapaCartoes[filtroCartao].limite;
+      }
 
-    // MODAL EDIÇÃO
+      // Projeção 6 meses
+      let projecaoMeses = [];
+      for (let i = 1; i <= 6; i++) {
+        let d = new Date(anoAtualIdx, mesAtualIdx + i, 1);
+        projecaoMeses.push({
+          mes: d.getMonth(),
+          ano: d.getFullYear(),
+          nome: d.toLocaleDateString('pt-BR', { month: 'short', year: '2-digit' }),
+          valor: 0
+        });
+      }
+
+      dadosTransacoesCache.forEach(t => {
+        const dtVenc = new Date((t.Vencimento || t.Data) + 'T00:00:00');
+        const isPago = t.Status;
+
+        if (dtVenc > dataUltimoVencimento) dataUltimoVencimento = dtVenc;
+
+        // Acumular comprometido do cartão
+        if (!isPago && t.Tipo !== 'FIXA' && mapaCartoes[t.Cartao]) {
+          mapaCartoes[t.Cartao].comprometido += t.Valor;
+        }
+
+        if (!isPago) {
+          pendenteGlobalTotal += t.Valor;
+
+          if (filtroCartao !== 'TODOS' && t.Cartao === filtroCartao) {
+            pendenteCartaoFiltro += t.Valor;
+          }
+
+          // Fatura Atual (mês vigente)
+          if (dtVenc.getMonth() === mesAtualIdx && dtVenc.getFullYear() === anoAtualIdx) {
+            if (filtroCartao === 'TODOS' || t.Cartao === filtroCartao) {
+              faturaMesAtualSum += t.Valor;
+            }
+          }
+
+          // Alerta 3 dias próximos do vencimento
+          const diffDias = Math.ceil((dtVenc - hoje) / (1000 * 60 * 60 * 24));
+          if (diffDias >= 0 && diffDias <= 3) {
+            alertaVencimentos.push(`${t.Descricao} (${t.Cartao}) em ${dtVenc.toLocaleDateString('pt-BR')} - R$ ${t.Valor.toFixed(2)}`);
+          }
+
+          // Projeção
+          projecaoMeses.forEach(m => {
+            if (dtVenc.getMonth() === m.mes && dtVenc.getFullYear() === m.ano) {
+              if (filtroCartao === 'TODOS' || t.Cartao === filtroCartao) {
+                m.valor += t.Valor;
+              }
+            }
+          });
+        }
+      });
+
+      // RENDERIZAR CARDS DOS CARTÕES
+      const containerStatusCartoes = document.getElementById('container-status-cartoes');
+      containerStatusCartoes.innerHTML = '';
+
+      Object.keys(mapaCartoes).forEach(nome => {
+        const c = mapaCartoes[nome];
+        const disp = Math.max(0, c.limite - c.comprometido);
+        const pct = c.limite > 0 ? (c.comprometido / c.limite) * 100 : 0;
+        const isCritical = pct >= 80;
+        
+        // Fechado?
+        const diaHoje = hoje.getDate();
+        const isFechado = diaHoje >= c.fechamento && diaHoje < c.vencimento;
+
+        containerStatusCartoes.innerHTML += `
+          <div class="card ${isCritical ? 'critical' : ''}">
+            <span class="card-badge ${isFechado ? 'closed' : ''}">${isFechado ? '🔒 Fatura Fechada' : '🔓 Fatura Aberta'}</span>
+            <h3>${nome}</h3>
+            <p>R$ ${disp.toLocaleString('pt-BR', {minimumFractionDigits: 2})}</p>
+            <div class="subtext">
+              Comprometido: R$ ${c.comprometido.toLocaleString('pt-BR', {minimumFractionDigits: 2})} (${pct.toFixed(1)}%)
+            </div>
+            <div class="progress-bar-bg">
+              <div class="progress-bar-fill ${isCritical ? 'critical' : ''}" style="width: ${Math.min(100, pct)}%;"></div>
+            </div>
+          </div>
+        `;
+      });
+
+      // RENDERIZAR PROJEÇÃO E GRÁFICO
+      const containerProjecao = document.getElementById('container-projecao');
+      const chartProjecao = document.getElementById('chart-projecao');
+      containerProjecao.innerHTML = '';
+      chartProjecao.innerHTML = '';
+
+      const maxValorProj = Math.max(...projecaoMeses.map(m => m.valor), 1);
+
+      projecaoMeses.forEach(m => {
+        containerProjecao.innerHTML += `
+          <div class="card-mes">
+            <span>${m.nome}</span>
+            <strong>R$ ${m.valor.toLocaleString('pt-BR', {minimumFractionDigits: 2})}</strong>
+          </div>
+        `;
+
+        const heightPct = (m.valor / maxValorProj) * 100;
+        chartProjecao.innerHTML += `
+          <div class="chart-bar-wrap" title="${m.nome}: R$ ${m.valor.toFixed(2)}">
+            <div class="chart-bar" style="height: ${Math.max(4, heightPct)}%;"></div>
+            <span class="chart-label">${m.nome}</span>
+          </div>
+        `;
+      });
+
+      // ATUALIZAR RESUMOS SUPERIORES
+      const disponivelGlobal = Math.max(0, limiteGlobalTotal - pendenteGlobalTotal);
+      document.getElementById('resumo-limite').textContent = `R$ ${disponivelGlobal.toLocaleString('pt-BR', {minimumFractionDigits: 2})}`;
+      document.getElementById('subtext-limite-total').textContent = `Total Cadastrado: R$ ${limiteGlobalTotal.toLocaleString('pt-BR', {minimumFractionDigits: 2})}`;
+
+      if (filtroCartao !== 'TODOS' && mapaCartoes[filtroCartao]) {
+        const disponivelFiltro = Math.max(0, limiteCartaoFiltro - pendenteCartaoFiltro);
+        document.getElementById('titulo-limite-cartao').textContent = `Limite Disponível (${filtroCartao})`;
+        document.getElementById('resumo-limite-cartao').textContent = `R$ ${disponivelFiltro.toLocaleString('pt-BR', {minimumFractionDigits: 2})}`;
+        document.getElementById('subtext-limite-filtro').textContent = `Total do Cartão: R$ ${limiteCartaoFiltro.toLocaleString('pt-BR', {minimumFractionDigits: 2})}`;
+      } else {
+        document.getElementById('titulo-limite-cartao').textContent = 'Limite Disponível (Filtro)';
+        document.getElementById('resumo-limite-cartao').textContent = `R$ ${disponivelGlobal.toLocaleString('pt-BR', {minimumFractionDigits: 2})}`;
+        document.getElementById('subtext-limite-filtro').textContent = `Total Geral: R$ ${limiteGlobalTotal.toLocaleString('pt-BR', {minimumFractionDigits: 2})}`;
+      }
+
+      document.getElementById('resumo-fatura-atual').textContent = `R$ ${faturaMesAtualSum.toLocaleString('pt-BR', {minimumFractionDigits: 2})}`;
+      
+      if (dataUltimoVencimento.getTime() > 0) {
+        const strQuitacao = dataUltimoVencimento.toLocaleDateString('pt-BR', { month: 'long', year: 'numeric' });
+        document.getElementById('subtext-quitacao').textContent = `Projeção de Quitação: ${strQuitacao}`;
+      }
+
+      // ALERTAS
+      const boxAlert = document.getElementById('alert-vencimento');
+      if (alertaVencimentos.length > 0) {
+        boxAlert.style.display = 'block';
+        document.getElementById('alert-mensagem').textContent = alertaVencimentos.join(' | ');
+      } else {
+        boxAlert.style.display = 'none';
+      }
+
+      renderizarTabela();
+    }
+
+    // RENDERIZAR TABELA FILTRADA E ORDENADA
+    function renderizarTabela() {
+      const filtroCartao = document.getElementById('filtro-cartao').value;
+      const filtroMesVenc = document.getElementById('filtro-mes-vencimento').value;
+      const filtroStatus = document.getElementById('filtro-status').value;
+      const filtroTipo = document.getElementById('filtro-tipo').value;
+
+      let transacoesFiltradas = dadosTransacoesCache.filter(t => {
+        if (filtroCartao !== 'TODOS' && t.Cartao !== filtroCartao) return false;
+        if (filtroStatus === 'PENDENTE' && t.Status) return false;
+        if (filtroStatus === 'PAGO' && !t.Status) return false;
+        if (filtroTipo !== 'TODOS' && (t.Tipo || 'CARTAO') !== filtroTipo) return false;
+
+        if (filtroMesVenc) {
+          const dtVencStr = (t.Vencimento || t.Data).substring(0, 7);
+          if (dtVencStr !== filtroMesVenc) return false;
+        }
+
+        return true;
+      });
+
+      // ORDENAÇÃO
+      transacoesFiltradas.sort((a, b) => {
+        let valA = a[ordenacaoAtual.coluna];
+        let valB = b[ordenacaoAtual.coluna];
+        
+        if (typeof valA === 'string') valA = valA.toLowerCase();
+        if (typeof valB === 'string') valB = valB.toLowerCase();
+
+        if (valA < valB) return ordenacaoAtual.asc ? -1 : 1;
+        if (valA > valB) return ordenacaoAtual.asc ? 1 : -1;
+        return 0;
+      });
+
+      const tbody = document.getElementById('tabela-corpo');
+      tbody.innerHTML = '';
+
+      let totalSomaExibido = 0;
+
+      if (transacoesFiltradas.length === 0) {
+        tbody.innerHTML = '<tr><td colspan="9" style="text-align:center; color: var(--text-muted);">Nenhum lançamento encontrado para os filtros selecionados.</td></tr>';
+      } else {
+        transacoesFiltradas.forEach(t => {
+          totalSomaExibido += t.Valor;
+          const isSelected = idsSelecionados.has(t.id);
+          const isPago = t.Status;
+
+          tbody.innerHTML += `
+            <tr class="clickable-row ${isSelected ? 'selected-row' : ''}" onclick="toggleSelectRow(event, ${t.id})">
+              <td>
+                <input type="checkbox" ${isSelected ? 'checked' : ''} onclick="event.stopPropagation(); toggleSelectId(${t.id})">
+              </td>
+              <td>${t.Data ? t.Data.split('-').reverse().join('/') : '-'}</td>
+              <td>
+                ${t.Descricao}
+                ${t.Tipo === 'FIXA' ? '<span class="badge badge-tipo">FIXA</span>' : ''}
+              </td>
+              <td><strong>${t.Cartao}</strong></td>
+              <td>${t.Parcelas || 1}x</td>
+              <td>${t.Vencimento ? t.Vencimento.split('-').reverse().join('/') : '-'}</td>
+              <td>R$ ${t.Valor.toLocaleString('pt-BR', {minimumFractionDigits: 2})}</td>
+              <td><span class="badge ${isPago ? 'badge-pago' : 'badge-pendente'}">${isPago ? 'PAGO' : 'PENDENTE'}</span></td>
+              <td style="text-align: center;" onclick="event.stopPropagation();">
+                <button class="btn-edit" onclick='abrirModalEdit(${JSON.stringify(t)})' title="Editar">✏️</button>
+                <button class="btn-clone" onclick='duplicarLancamento(${JSON.stringify(t)})' title="Duplicar">📋</button>
+                <button class="btn-delete" onclick="excluirTransacao(${t.id})" title="Excluir">🗑️</button>
+              </td>
+            </tr>
+          `;
+        });
+      }
+
+      document.getElementById('total-exibido-filtro').textContent = `Total Exibido: R$ ${totalSomaExibido.toLocaleString('pt-BR', {minimumFractionDigits: 2})}`;
+      atualizarContadorSelecao();
+    }
+
+    // LÓGICA DE SELEÇÃO E CHECKBOX
+    function toggleSelectId(id) {
+      if (idsSelecionados.has(id)) {
+        idsSelecionados.delete(id);
+      } else {
+        idsSelecionados.add(id);
+      }
+      renderizarTabela();
+    }
+
+    function toggleSelectRow(e, id) {
+      if (e.target.tagName === 'BUTTON' || e.target.tagName === 'INPUT') return;
+      toggleSelectId(id);
+    }
+
+    function toggleSelectAll(master) {
+      const filtroCartao = document.getElementById('filtro-cartao').value;
+      const filtroMesVenc = document.getElementById('filtro-mes-vencimento').value;
+      const filtroStatus = document.getElementById('filtro-status').value;
+      const filtroTipo = document.getElementById('filtro-tipo').value;
+
+      dadosTransacoesCache.forEach(t => {
+        if (filtroCartao !== 'TODOS' && t.Cartao !== filtroCartao) return;
+        if (filtroStatus === 'PENDENTE' && t.Status) return;
+        if (filtroStatus === 'PAGO' && !t.Status) return;
+        if (filtroTipo !== 'TODOS' && (t.Tipo || 'CARTAO') !== filtroTipo) return;
+        if (filtroMesVenc && (t.Vencimento || t.Data).substring(0, 7) !== filtroMesVenc) return;
+
+        if (master.checked) idsSelecionados.add(t.id);
+        else idsSelecionados.delete(t.id);
+      });
+
+      renderizarTabela();
+    }
+
+    function atualizarContadorSelecao() {
+      let qtd = 0;
+      let soma = 0;
+
+      dadosTransacoesCache.forEach(t => {
+        if (idsSelecionados.has(t.id)) {
+          qtd++;
+          soma += t.Valor;
+        }
+      });
+
+      document.getElementById('cnt-marcados').textContent = `${qtd} compras`;
+      document.getElementById('soma-marcados').textContent = `R$ ${soma.toLocaleString('pt-BR', {minimumFractionDigits: 2})}`;
+    }
+
+    // PAGAR SELECIONADOS
+    async function pagarMarcados() {
+      if (idsSelecionados.size === 0) {
+        alert('Selecione pelo menos uma compra/fatura marcando o checkbox.');
+        return;
+      }
+
+      let soma = 0;
+      dadosTransacoesCache.forEach(t => {
+        if (idsSelecionados.has(t.id)) soma += t.Valor;
+      });
+
+      const confirmacao = confirm(`Deseja confirmar o pagamento de ${idsSelecionados.size} compras marcadas?\n\nValor Total: R$ ${soma.toLocaleString('pt-BR', {minimumFractionDigits: 2})}`);
+
+      if (confirmacao) {
+        const arrayIds = Array.from(idsSelecionados);
+
+        const { error } = await supabaseClient
+          .from('transacoes')
+          .update({ Status: true })
+          .in('id', arrayIds);
+
+        if (error) alert('Erro ao atualizar status: ' + error.message);
+        else {
+          alert('Compras marcadas como PAGAS com sucesso!');
+          idsSelecionados.clear();
+          carregarDados();
+        }
+      }
+    }
+
+    // DUPLICAR LANÇAMENTO
+    async function duplicarLancamento(t) {
+      if (confirm(`Duplicar o lançamento "${t.Descricao}"?`)) {
+        const { id, ...novoItem } = t;
+        novoItem.Descricao = `${novoItem.Descricao} (Cópia)`;
+        novoItem.Status = false;
+
+        const { error } = await supabaseClient.from('transacoes').insert([novoItem]);
+        if (error) alert('Erro ao duplicar: ' + error.message);
+        else carregarDados();
+      }
+    }
+
+    // MODAL EDITAR
     function abrirModalEdit(t) {
       document.getElementById('edit-id').value = t.id;
-      document.getElementById('edit-tipo').value = t.Tipo || 'Cartão';
+      document.getElementById('edit-tipo').value = t.Tipo || 'CARTAO';
       document.getElementById('edit-descricao').value = t.Descricao;
       document.getElementById('edit-valor').value = t.Valor;
       document.getElementById('edit-data').value = t.Data;
       document.getElementById('edit-vencimento').value = t.Vencimento;
-      document.getElementById('edit-cartao').value = t.Cartao || '';
+      document.getElementById('edit-cartao').value = t.Cartao;
       document.getElementById('edit-status').value = t.Status ? "true" : "false";
       document.getElementById('modal-editar').style.display = 'flex';
     }
@@ -649,23 +908,25 @@
 
       if (error) alert('Erro ao atualizar: ' + error.message);
       else {
-        alert('Lançamento alterado!');
+        alert('Lançamento atualizado!');
         fecharModalEdit();
-        carregarTransacoes();
+        carregarDados();
       }
     });
 
     // EXCLUIR TRANSAÇÃO
     async function excluirTransacao(id) {
-      if (confirm('Deseja realmente apagar este lançamento?')) {
+      if (confirm('Tem certeza que deseja apagar essa parcela/lançamento?')) {
         const { error } = await supabaseClient.from('transacoes').delete().eq('id', id);
         if (error) alert('Erro ao excluir: ' + error.message);
-        else carregarTransacoes();
+        else {
+          idsSelecionados.delete(id);
+          carregarDados();
+        }
       }
     }
 
-    // START
-    inicializar();
+    carregarCartoes();
   </script>
 </body>
 </html>
