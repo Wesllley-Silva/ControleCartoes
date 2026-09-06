@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Painel Financeiro - Dark Mode</title>
+  <title>Painel Financeiro - Projeção 6 Meses</title>
   
   <style>
     :root {
@@ -26,15 +26,20 @@
     
     h1 { text-align: center; margin-bottom: 25px; font-size: 1.8em; color: var(--text-main); font-weight: 700; }
 
-    /* CARDS DE RESUMO */
+    /* CARDS DE RESUMO FIXOS */
     .cards-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 16px; margin-bottom: 25px; }
     .card { background: var(--card-bg); border: 1px solid var(--card-border); padding: 20px; border-radius: 12px; box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3); }
     .card h3 { margin: 0 0 8px 0; font-size: 0.8em; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.5px; }
     .card p { margin: 0; font-size: 1.6em; font-weight: 700; }
     .card.limite p { color: var(--accent-green); }
-    .card.atual p { color: var(--accent-red); }
-    .card.futura p { color: var(--accent-yellow); }
     .card.detalhe-limite p { color: var(--accent-blue); }
+    .card.atual p { color: var(--accent-red); }
+
+    /* PROJEÇÃO MÊS A MÊS */
+    .projecao-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(130px, 1fr)); gap: 12px; margin-bottom: 25px; }
+    .card-mes { background: var(--card-bg); border: 1px solid var(--card-border); padding: 14px; border-radius: 10px; text-align: center; }
+    .card-mes span { display: block; font-size: 0.75em; color: var(--text-muted); font-weight: 600; text-transform: uppercase; }
+    .card-mes strong { display: block; font-size: 1.1em; color: var(--accent-yellow); margin-top: 5px; font-weight: 700; }
 
     /* CONTAINERS / CAIXAS */
     .box { background: var(--card-bg); border: 1px solid var(--card-border); padding: 24px; border-radius: 12px; box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3); margin-bottom: 25px; }
@@ -75,10 +80,8 @@
     .badge-pendente { background: rgba(239, 68, 68, 0.15); color: var(--accent-red); border: 1px solid rgba(239, 68, 68, 0.3); }
 
     /* MODAL DE EDIÇÃO */
-    .modal-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0, 0, 0, 0.7); display: none; justify-content: center; align-items: center; z-index: 1000; }
-    .modal-content { background: var(--card-bg); border: 1px solid var(--card-border); padding: 25px; border-radius: 12px; width: 90%; max-width: 500px; box-shadow: 0 10px 25px rgba(0,0,0,0.5); }
-    .modal-actions { display: flex; gap: 10px; margin-top: 15px; }
-    .btn-secondary { background: #475569; color: #fff; border: none; cursor: pointer; }
+    .modal-overlay { position: fixed; top:0; left:0; width:100%; height:100%; background: rgba(0,0,0,0.7); display:none; justify-content:center; align-items:center; z-index:1000; }
+    .modal { background: var(--card-bg); padding: 25px; border-radius: 12px; border: 1px solid var(--card-border); width: 90%; max-width: 500px; }
   </style>
 
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
@@ -88,7 +91,7 @@
   <div class="container">
     <h1>💳 Dashboard Financeiro de Cartões</h1>
 
-    <!-- CARDS DE RESUMO -->
+    <!-- CARDS DE RESUMO PRINCIPAIS -->
     <div class="cards-grid">
       <div class="card limite">
         <h3>Limite Disponível Global</h3>
@@ -102,9 +105,13 @@
         <h3>Fatura do Mês Atual</h3>
         <p id="resumo-fatura-atual">R$ 0,00</p>
       </div>
-      <div class="card futura">
-        <h3>Faturas Futuras</h3>
-        <p id="resumo-faturas-futuras">R$ 0,00</p>
+    </div>
+
+    <!-- PROJEÇÃO DETALHADA DOS PRÓXIMOS 6 MESES -->
+    <div class="box">
+      <h2>📅 Planejamento de Faturas (Próximos Meses)</h2>
+      <div class="projecao-grid" id="container-projecao">
+        <!-- Gerado via JavaScript -->
       </div>
     </div>
 
@@ -206,42 +213,42 @@
     </div>
   </div>
 
-  <!-- MODAL DE EDIÇÃO -->
-  <div id="modal-editar" class="modal-overlay">
-    <div class="modal-content">
+  <!-- MODAL PARA EDITAR TRANSAÇÃO -->
+  <div class="modal-overlay" id="modal-editar">
+    <div class="modal">
       <h2>✏️ Editar Lançamento</h2>
-      <input type="hidden" id="edit-id">
-      <form id="form-editar" onsubmit="salvarEdicao(event)">
-        <div class="full-width">
+      <form id="form-editar">
+        <input type="hidden" id="edit-id">
+        <div>
           <label>Descrição</label>
           <input type="text" id="edit-descricao" required>
         </div>
         <div>
-          <label>Valor Parcela (R$)</label>
+          <label>Valor (R$)</label>
           <input type="number" id="edit-valor" step="0.01" required>
         </div>
         <div>
-          <label>Data Compra</label>
+          <label>Data da Compra</label>
           <input type="date" id="edit-data" required>
         </div>
         <div>
-          <label>Venc. Fatura</label>
+          <label>Data Vencimento</label>
           <input type="date" id="edit-vencimento" required>
         </div>
         <div>
           <label>Cartão</label>
           <select id="edit-cartao" required></select>
         </div>
-        <div class="full-width">
+        <div>
           <label>Status</label>
           <select id="edit-status">
             <option value="false">PENDENTE</option>
             <option value="true">PAGO</option>
           </select>
         </div>
-        <div class="full-width modal-actions">
+        <div class="full-width" style="display:flex; gap:10px; margin-top:10px;">
           <button type="submit" class="btn-blue">Salvar Alterações</button>
-          <button type="button" class="btn-secondary" onclick="fecharModal()">Cancelar</button>
+          <button type="button" class="btn-delete" onclick="fecharModalEdit()">Cancelar</button>
         </div>
       </form>
     </div>
@@ -277,22 +284,22 @@
       }
     });
 
-    // CARREGAR LISTA DE CARTÕES
+    // CARREGAR CARTÕES
     async function carregarCartoes() {
       const { data } = await supabaseClient.from('cartoes').select('*');
       const selectCompra = document.getElementById('t-cartao');
       const selectFiltro = document.getElementById('filtro-cartao');
-      const selectEdit = document.getElementById('edit-cartao');
+      const selectEditCartao = document.getElementById('edit-cartao');
       
       selectCompra.innerHTML = '<option value="">Selecione...</option>';
       selectFiltro.innerHTML = '<option value="TODOS">Todos os Cartões</option>';
-      selectEdit.innerHTML = '';
+      selectEditCartao.innerHTML = '';
 
       if (data) {
         data.forEach(c => {
           selectCompra.innerHTML += `<option value="${c.nome}">${c.nome}</option>`;
           selectFiltro.innerHTML += `<option value="${c.nome}">${c.nome}</option>`;
-          selectEdit.innerHTML += `<option value="${c.nome}">${c.nome}</option>`;
+          selectEditCartao.innerHTML += `<option value="${c.nome}">${c.nome}</option>`;
         });
       }
       carregarDados();
@@ -309,7 +316,6 @@
       const primeiroVencStr = document.getElementById('t-primeiro-vencimento').value;
 
       const [anoInicio, mesInicio] = primeiroVencStr.split('-').map(Number);
-
       const { data: cartaoData } = await supabaseClient.from('cartoes').select('*').eq('nome', nomeCartao).single();
       const diaVenc = cartaoData ? cartaoData.dia_vencimento : 5;
 
@@ -318,17 +324,15 @@
 
       for (let i = 0; i < totalParcelas; i++) {
         let dataVenc = new Date(anoInicio, (mesInicio - 1) + i, diaVenc);
-
         const ano = dataVenc.getFullYear();
         const mes = String(dataVenc.getMonth() + 1).padStart(2, '0');
         const dia = String(dataVenc.getDate()).padStart(2, '0');
-        const vencimentoFormatado = `${ano}-${mes}-${dia}`;
 
         lancamentos.push({
           Descricao: `${descricao} (${i + 1}/${totalParcelas})`,
           Valor: valorParcela,
           Data: dataCompraStr,
-          Vencimento: vencimentoFormatado,
+          Vencimento: `${ano}-${mes}-${dia}`,
           Cartao: nomeCartao,
           Parcelas: totalParcelas,
           Status: false
@@ -346,7 +350,7 @@
       }
     });
 
-    // CARREGAR DADOS E CALCULAR RESUMOS E LIMITES
+    // CARREGAR DADOS E PROJEÇÃO DOS PRÓXIMOS 6 MESES
     async function carregarDados() {
       const filtro = document.getElementById('filtro-cartao').value;
       let query = supabaseClient.from('transacoes').select('*');
@@ -362,21 +366,31 @@
       let limiteGlobal = 0;
       let limiteFiltroCartao = 0;
       let faturaAtual = 0;
-      let faturaFutura = 0;
       let pendenteTotalGeral = 0;
 
       if (cartoes) {
         cartoes.forEach(c => {
           limiteGlobal += c.limite;
-          if (filtro !== 'TODOS' && filtro === c.nome) {
-            limiteFiltroCartao = c.limite;
-          }
+          if (filtro !== 'TODOS' && filtro === c.nome) limiteFiltroCartao = c.limite;
         });
       }
 
       const hoje = new Date();
-      const mesAtual = hoje.getMonth();
-      const anoAtual = hoje.getFullYear();
+      const mesAtualIdx = hoje.getMonth();
+      const anoAtualIdx = hoje.getFullYear();
+
+      // Estrutura para os próximos 6 meses + excedente
+      let projecaoMeses = [];
+      for (let i = 1; i <= 6; i++) {
+        let d = new Date(anoAtualIdx, mesAtualIdx + i, 1);
+        projecaoMeses.push({
+          mes: d.getMonth(),
+          ano: d.getFullYear(),
+          nome: d.toLocaleDateString('pt-BR', { month: 'short', year: '2-digit' }),
+          valor: 0
+        });
+      }
+      let valorExcedente = 0;
 
       if (transacoes) {
         transacoes.forEach(t => {
@@ -385,14 +399,23 @@
 
           if (!isPago) {
             pendenteTotalGeral += t.Valor;
-            if (dtVenc.getMonth() === mesAtual && dtVenc.getFullYear() === anoAtual) {
+            
+            if (dtVenc.getMonth() === mesAtualIdx && dtVenc.getFullYear() === anoAtualIdx) {
               faturaAtual += t.Valor;
             } else if (dtVenc > hoje) {
-              faturaFutura += t.Valor;
+              // Verifica se cai nos próximos 6 meses
+              let somado = false;
+              projecaoMeses.forEach(m => {
+                if (dtVenc.getMonth() === m.mes && dtVenc.getFullYear() === m.ano) {
+                  m.valor += t.Valor;
+                  somado = true;
+                }
+              });
+              if (!somado && dtVenc > new Date(projecaoMeses[5].ano, projecaoMeses[5].mes, 31)) {
+                valorExcedente += t.Valor;
+              }
             }
           }
-
-          const jsonItem = JSON.stringify(t).replace(/'/g, "&apos;");
 
           tbody.innerHTML += `
             <tr>
@@ -404,19 +427,36 @@
               <td>${t.Valor ? t.Valor.toLocaleString('pt-BR', {style:'currency', currency:'BRL'}) : 'R$ 0,00'}</td>
               <td><span class="badge ${isPago ? 'badge-pago' : 'badge-pendente'}">${isPago ? 'PAGO' : 'PENDENTE'}</span></td>
               <td>
-                <button class="btn-edit" onclick='abrirModalEditar(${jsonItem})'>✏️ Editar</button>
-                <button class="btn-delete" onclick="excluirTransacao(${t.id})">🗑️</button>
+                <button class="btn-edit" onclick='abrirModalEdit(${JSON.stringify(t)})'>✏️ Editar</button>
+                <button class="btn-delete" onclick="excluirTransacao(${t.id})">🗑️ Excluir</button>
               </td>
             </tr>
           `;
         });
       }
 
+      // Renderizar Cards de Projeção
+      const containerProjecao = document.getElementById('container-projecao');
+      containerProjecao.innerHTML = '';
+      projecaoMeses.forEach(m => {
+        containerProjecao.innerHTML += `
+          <div class="card-mes">
+            <span>${m.nome}</span>
+            <strong>${m.valor.toLocaleString('pt-BR', {style:'currency', currency:'BRL'})}</strong>
+          </div>
+        `;
+      });
+      containerProjecao.innerHTML += `
+        <div class="card-mes" style="border-color: var(--accent-blue);">
+          <span>+6 Meses</span>
+          <strong style="color: var(--accent-blue);">${valorExcedente.toLocaleString('pt-BR', {style:'currency', currency:'BRL'})}</strong>
+        </div>
+      `;
+
+      // Atualizar Resumos
       const limiteDisponivelGlobal = Math.max(0, limiteGlobal - pendenteTotalGeral);
-      
       document.getElementById('resumo-limite').textContent = limiteDisponivelGlobal.toLocaleString('pt-BR', {style:'currency', currency:'BRL'});
       document.getElementById('resumo-fatura-atual').textContent = faturaAtual.toLocaleString('pt-BR', {style:'currency', currency:'BRL'});
-      document.getElementById('resumo-faturas-futuras').textContent = faturaFutura.toLocaleString('pt-BR', {style:'currency', currency:'BRL'});
 
       if (filtro && filtro !== 'TODOS') {
         const disponivelCartao = Math.max(0, limiteFiltroCartao - pendenteTotalGeral);
@@ -428,24 +468,23 @@
       }
     }
 
-    // ABRIR E SALVAR MODAL DE EDIÇÃO
-    function abrirModalEditar(item) {
-      document.getElementById('edit-id').value = item.id;
-      document.getElementById('edit-descricao').value = item.Descricao;
-      document.getElementById('edit-valor').value = item.Valor;
-      document.getElementById('edit-data').value = item.Data;
-      document.getElementById('edit-vencimento').value = item.Vencimento;
-      document.getElementById('edit-cartao').value = item.Cartao;
-      document.getElementById('edit-status').value = item.Status ? "true" : "false";
-
+    // MODAL DE EDIÇÃO
+    function abrirModalEdit(t) {
+      document.getElementById('edit-id').value = t.id;
+      document.getElementById('edit-descricao').value = t.Descricao;
+      document.getElementById('edit-valor').value = t.Valor;
+      document.getElementById('edit-data').value = t.Data;
+      document.getElementById('edit-vencimento').value = t.Vencimento;
+      document.getElementById('edit-cartao').value = t.Cartao;
+      document.getElementById('edit-status').value = t.Status ? "true" : "false";
       document.getElementById('modal-editar').style.display = 'flex';
     }
 
-    function fecharModal() {
+    function fecharModalEdit() {
       document.getElementById('modal-editar').style.display = 'none';
     }
 
-    async function salvarEdicao(e) {
+    document.getElementById('form-editar').addEventListener('submit', async (e) => {
       e.preventDefault();
       const id = document.getElementById('edit-id').value;
       const Descricao = document.getElementById('edit-descricao').value;
@@ -455,30 +494,29 @@
       const Cartao = document.getElementById('edit-cartao').value;
       const Status = document.getElementById('edit-status').value === "true";
 
-      const { error } = await supabaseClient.from('transacoes').update({
-        Descricao, Valor, Data, Vencimento, Cartao, Status
-      }).eq('id', id);
+      const { error } = await supabaseClient
+        .from('transacoes')
+        .update({ Descricao, Valor, Data, Vencimento, Cartao, Status })
+        .eq('id', id);
 
       if (error) alert('Erro ao atualizar: ' + error.message);
       else {
         alert('Lançamento atualizado!');
-        fecharModal();
+        fecharModalEdit();
         carregarDados();
       }
-    }
+    });
 
     // EXCLUIR TRANSAÇÃO
     async function excluirTransacao(id) {
       if (confirm('Tem certeza que deseja apagar essa parcela/lançamento?')) {
         const { error } = await supabaseClient.from('transacoes').delete().eq('id', id);
         if (error) alert('Erro ao excluir: ' + error.message);
-        else {
-          carregarDados();
-        }
+        else carregarDados();
       }
     }
 
-    // PAGAR FATURA DO MÊS
+    // PAGAR FATURA
     async function pagarFaturaAtual() {
       const filtro = document.getElementById('filtro-cartao').value;
       if (filtro === 'TODOS' || !filtro) {
