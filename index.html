@@ -1,4 +1,3 @@
-
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
@@ -22,513 +21,2329 @@
       --accent-purple: #8b5cf6;
     }
 
-    * { box-sizing: border-box; font-family: 'Inter', system-ui, -apple-system, sans-serif; }
-    body { background-color: var(--bg-color); color: var(--text-main); margin: 0; padding: 20px; }
-    .container { max-width: 1200px; margin: 0 auto; }
+    * {
+      box-sizing: border-box;
+      font-family: 'Inter', system-ui, -apple-system, sans-serif;
+    }
+
+    body {
+      background-color: var(--bg-color);
+      color: var(--text-main);
+      margin: 0;
+      padding: 20px;
+    }
+
+    .container {
+      max-width: 1200px;
+      margin: 0 auto;
+    }
     
-    h1 { text-align: center; margin-bottom: 25px; font-size: 1.8em; color: var(--text-main); font-weight: 700; }
+    h1 {
+      text-align: center;
+      margin-bottom: 25px;
+      font-size: 1.8em;
+      color: var(--text-main);
+      font-weight: 700;
+    }
 
     /* ALERTAS DE VENCIMENTO PRÓXIMO */
-    .alert-box { background: rgba(245, 158, 11, 0.15); border: 1px solid var(--accent-yellow); padding: 14px 20px; border-radius: 10px; margin-bottom: 20px; color: #fde68a; display: none; }
-    .alert-box strong { color: var(--accent-yellow); }
+    .alert-box {
+      background: rgba(245, 158, 11, 0.15);
+      border: 1px solid var(--accent-yellow);
+      padding: 14px 20px;
+      border-radius: 10px;
+      margin-bottom: 20px;
+      color: #fde68a;
+      display: none;
+    }
+
+    .alert-box strong {
+      color: var(--accent-yellow);
+    }
 
     /* CARDS DE RESUMO FIXOS */
-    .cards-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 16px; margin-bottom: 25px; }
-    .card { background: var(--card-bg); border: 1px solid var(--card-border); padding: 20px; border-radius: 12px; box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3); position: relative; }
-    .card h3 { margin: 0 0 8px 0; font-size: 0.8em; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.5px; }
-    .card p { margin: 0; font-size: 1.5em; font-weight: 700; }
-    .card .subtext { font-size: 0.8em; margin-top: 6px; color: var(--text-muted); }
-    .card.limite p { color: var(--accent-green); }
-    .card.detalhe-limite p { color: var(--accent-blue); }
-    .card.atual p { color: var(--accent-red); }
-    .card.critical { border-color: var(--accent-red); background: rgba(239, 68, 68, 0.08); }
-    .card-badge { position: absolute; top: 12px; right: 12px; font-size: 0.7em; padding: 3px 8px; border-radius: 12px; background: var(--card-border); color: var(--text-main); font-weight: 600; }
-    .card-badge.closed { background: rgba(245, 158, 11, 0.2); color: var(--accent-yellow); border: 1px solid var(--accent-yellow); }
+    .cards-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+      gap: 16px;
+      margin-bottom: 25px;
+    }
 
-    /* DETALHAMENTO DE CARTÕES COM METER/PORCENTAGEM */
-    .cartoes-detalhe-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 14px; margin-bottom: 25px; }
-    .progress-bar-bg { background: #0f172a; height: 8px; border-radius: 4px; overflow: hidden; margin-top: 8px; }
-    .progress-bar-fill { height: 100%; background: var(--accent-green); transition: width 0.3s; }
-    .progress-bar-fill.critical { background: var(--accent-red); }
+    .card {
+      background: var(--card-bg);
+      border: 1px solid var(--card-border);
+      padding: 20px;
+      border-radius: 12px;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+      position: relative;
+    }
 
-    /* PROJEÇÃO MÊS A MÊS E GRÁFICO */
-    .projecao-container { margin-bottom: 25px; }
-    .projecao-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(130px, 1fr)); gap: 12px; }
-    .card-mes { background: var(--card-bg); border: 1px solid var(--card-border); padding: 14px; border-radius: 10px; text-align: center; }
-    .card-mes span { display: block; font-size: 0.75em; color: var(--text-muted); font-weight: 600; text-transform: uppercase; }
-    .card-mes strong { display: block; font-size: 1.1em; color: var(--accent-yellow); margin-top: 5px; font-weight: 700; }
-    
-    /* GRÁFICO SIMPLES EM CSS */
-    .chart-box { display: flex; align-items: flex-end; gap: 12px; height: 120px; padding-top: 20px; border-bottom: 1px solid var(--card-border); margin-bottom: 15px; }
-    .chart-bar-wrap { flex: 1; display: flex; flex-direction: column; align-items: center; height: 100%; justify-content: flex-end; }
-    .chart-bar { width: 100%; max-width: 35px; background: var(--accent-blue); border-radius: 4px 4px 0 0; min-height: 4px; transition: height 0.3s; }
-    .chart-label { font-size: 0.7em; color: var(--text-muted); margin-top: 6px; text-transform: uppercase; }
+    .card h3 {
+      margin: 0 0 8px 0;
+      font-size: 0.8em;
+      color: var(--text-muted);
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
 
-    /* CONTAINERS / CAIXAS */
-    .box { background: var(--card-bg); border: 1px solid var(--card-border); padding: 24px; border-radius: 12px; box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3); margin-bottom: 25px; }
-    .box h2 { margin-top: 0; font-size: 1.2em; color: var(--text-main); border-bottom: 1px solid var(--card-border); padding-bottom: 12px; font-weight: 600; display: flex; justify-content: space-between; align-items: center; }
+    .card p {
+      margin: 0;
+      font-size: 1.5em;
+      font-weight: 700;
+    }
+
+    .card .subtext {
+      font-size: 0.8em;
+      margin-top: 6px;
+      color: var(--text-muted);
+    }
+
+    .card.limite p {
+      color: var(--accent-green);
+    }
+
+    .card.detalhe-limite p {
+      color: var(--accent-blue);
+    }
+
+    .card.atual p {
+      color: var(--accent-red);
+    }
+
+    .card.critical {
+      border-color: var(--accent-red);
+      background: rgba(239, 68, 68, 0.08);
+    }
+
+    .card-badge {
+      position: absolute;
+      top: 12px;
+      right: 12px;
+      font-size: 0.7em;
+      padding: 3px 8px;
+      border-radius: 12px;
+      background: var(--card-border);
+      color: var(--text-main);
+      font-weight: 600;
+    }
+
+    .card-badge.closed {
+      background: rgba(245, 158, 11, 0.2);
+      color: var(--accent-yellow);
+      border: 1px solid var(--accent-yellow);
+    }
+
+    /* DETALHAMENTO DE CARTÕES */
+    .cartoes-detalhe-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+      gap: 14px;
+      margin-bottom: 25px;
+    }
+
+    .progress-bar-bg {
+      background: #0f172a;
+      height: 8px;
+      border-radius: 4px;
+      overflow: hidden;
+      margin-top: 8px;
+    }
+
+    .progress-bar-fill {
+      height: 100%;
+      background: var(--accent-green);
+      transition: width 0.3s;
+    }
+
+    .progress-bar-fill.critical {
+      background: var(--accent-red);
+    }
+
+    /* PROJEÇÃO */
+    .projecao-container {
+      margin-bottom: 25px;
+    }
+
+    .projecao-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(130px, 1fr));
+      gap: 12px;
+    }
+
+    .card-mes {
+      background: var(--card-bg);
+      border: 1px solid var(--card-border);
+      padding: 14px;
+      border-radius: 10px;
+      text-align: center;
+    }
+
+    .card-mes span {
+      display: block;
+      font-size: 0.75em;
+      color: var(--text-muted);
+      font-weight: 600;
+      text-transform: uppercase;
+    }
+
+    .card-mes strong {
+      display: block;
+      font-size: 1.1em;
+      color: var(--accent-yellow);
+      margin-top: 5px;
+      font-weight: 700;
+    }
+
+    /* GRÁFICO */
+    .chart-box {
+      display: flex;
+      align-items: flex-end;
+      gap: 12px;
+      height: 120px;
+      padding-top: 20px;
+      border-bottom: 1px solid var(--card-border);
+      margin-bottom: 15px;
+    }
+
+    .chart-bar-wrap {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      height: 100%;
+      justify-content: flex-end;
+    }
+
+    .chart-bar {
+      width: 100%;
+      max-width: 35px;
+      background: var(--accent-blue);
+      border-radius: 4px 4px 0 0;
+      min-height: 4px;
+      transition: height 0.3s;
+    }
+
+    .chart-label {
+      font-size: 0.7em;
+      color: var(--text-muted);
+      margin-top: 6px;
+      text-transform: uppercase;
+    }
+
+    /* CONTAINERS */
+    .box {
+      background: var(--card-bg);
+      border: 1px solid var(--card-border);
+      padding: 24px;
+      border-radius: 12px;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+      margin-bottom: 25px;
+    }
+
+    .box h2 {
+      margin-top: 0;
+      font-size: 1.2em;
+      color: var(--text-main);
+      border-bottom: 1px solid var(--card-border);
+      padding-bottom: 12px;
+      font-weight: 600;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
     
     /* FORMULÁRIOS */
-    form { display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 14px; margin-top: 15px; }
-    .full-width { grid-column: 1 / -1; }
-    label { font-size: 0.85em; font-weight: 600; margin-bottom: 6px; display: block; color: var(--text-muted); }
+    form {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+      gap: 14px;
+      margin-top: 15px;
+    }
+
+    .full-width {
+      grid-column: 1 / -1;
+    }
+
+    label {
+      font-size: 0.85em;
+      font-weight: 600;
+      margin-bottom: 6px;
+      display: block;
+      color: var(--text-muted);
+    }
     
-    input, select, button { width: 100%; padding: 12px; background: #0f172a; border: 1px solid var(--card-border); border-radius: 8px; font-size: 0.95em; color: var(--text-main); transition: all 0.2s; }
-    input:focus, select:focus { outline: none; border-color: var(--accent-blue); box-shadow: 0 0 0 2px rgba(59, 130, 246, 0.2); }
+    input,
+    select,
+    button {
+      width: 100%;
+      padding: 12px;
+      background: #0f172a;
+      border: 1px solid var(--card-border);
+      border-radius: 8px;
+      font-size: 0.95em;
+      color: var(--text-main);
+      transition: all 0.2s;
+    }
+
+    input:focus,
+    select:focus {
+      outline: none;
+      border-color: var(--accent-blue);
+      box-shadow: 0 0 0 2px rgba(59, 130, 246, 0.2);
+    }
     
     /* BOTÕES */
-    .btn-green { background-color: var(--accent-green); color: #ffffff; font-weight: 600; border: none; cursor: pointer; }
-    .btn-green:hover { background-color: var(--accent-green-hover); }
-    .btn-blue { background-color: var(--accent-blue); color: #ffffff; font-weight: 600; border: none; cursor: pointer; }
-    .btn-blue:hover { background-color: var(--accent-blue-hover); }
-    .btn-gray { background-color: var(--card-border); color: var(--text-main); font-weight: 600; border: none; cursor: pointer; width: auto; padding: 0 16px; }
-    .btn-gray:hover { background-color: #475569; }
-    .btn-edit { background-color: rgba(59, 130, 246, 0.2); color: var(--accent-blue); border: 1px solid rgba(59, 130, 246, 0.4); padding: 6px 8px; border-radius: 6px; cursor: pointer; font-size: 0.85em; width: auto; }
-    .btn-edit:hover { background-color: var(--accent-blue); color: #fff; }
-    .btn-clone { background-color: rgba(139, 92, 246, 0.2); color: var(--accent-purple); border: 1px solid rgba(139, 92, 246, 0.4); padding: 6px 8px; border-radius: 6px; cursor: pointer; font-size: 0.85em; width: auto; }
-    .btn-clone:hover { background-color: var(--accent-purple); color: #fff; }
-    .btn-delete { background-color: rgba(239, 68, 68, 0.2); color: var(--accent-red); border: 1px solid rgba(239, 68, 68, 0.4); padding: 6px 8px; border-radius: 6px; cursor: pointer; font-size: 0.85em; width: auto; }
-    .btn-delete:hover { background-color: var(--accent-red); color: #fff; }
+    .btn-green {
+      background-color: var(--accent-green);
+      color: #ffffff;
+      font-weight: 600;
+      border: none;
+      cursor: pointer;
+    }
 
-    /* BARRA DE FILTRO E CONTADORES */
-    .fatura-actions { display: flex; gap: 12px; align-items: flex-end; flex-wrap: wrap; background: rgba(255, 255, 255, 0.03); padding: 16px; border-radius: 10px; border: 1px solid var(--card-border); margin-bottom: 15px; }
-    .fatura-actions .field { flex: 1; min-width: 150px; }
-    
-    .selection-counter-bar { background: rgba(59, 130, 246, 0.15); border: 1px solid rgba(59, 130, 246, 0.4); padding: 12px 18px; border-radius: 8px; margin-bottom: 15px; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 10px; }
-    .selection-counter-bar strong { color: var(--accent-blue); font-size: 1.1em; }
+    .btn-green:hover {
+      background-color: var(--accent-green-hover);
+    }
+
+    .btn-blue {
+      background-color: var(--accent-blue);
+      color: #ffffff;
+      font-weight: 600;
+      border: none;
+      cursor: pointer;
+    }
+
+    .btn-blue:hover {
+      background-color: var(--accent-blue-hover);
+    }
+
+    .btn-gray {
+      background-color: var(--card-border);
+      color: var(--text-main);
+      font-weight: 600;
+      border: none;
+      cursor: pointer;
+      width: auto;
+      padding: 0 16px;
+    }
+
+    .btn-gray:hover {
+      background-color: #475569;
+    }
+
+    .btn-edit {
+      background-color: rgba(59, 130, 246, 0.2);
+      color: var(--accent-blue);
+      border: 1px solid rgba(59, 130, 246, 0.4);
+      padding: 6px 8px;
+      border-radius: 6px;
+      cursor: pointer;
+      font-size: 0.85em;
+      width: auto;
+    }
+
+    .btn-edit:hover {
+      background-color: var(--accent-blue);
+      color: #fff;
+    }
+
+    .btn-clone {
+      background-color: rgba(139, 92, 246, 0.2);
+      color: var(--accent-purple);
+      border: 1px solid rgba(139, 92, 246, 0.4);
+      padding: 6px 8px;
+      border-radius: 6px;
+      cursor: pointer;
+      font-size: 0.85em;
+      width: auto;
+    }
+
+    .btn-clone:hover {
+      background-color: var(--accent-purple);
+      color: #fff;
+    }
+
+    .btn-delete {
+      background-color: rgba(239, 68, 68, 0.2);
+      color: var(--accent-red);
+      border: 1px solid rgba(239, 68, 68, 0.4);
+      padding: 6px 8px;
+      border-radius: 6px;
+      cursor: pointer;
+      font-size: 0.85em;
+      width: auto;
+    }
+
+    .btn-delete:hover {
+      background-color: var(--accent-red);
+      color: #fff;
+    }
+
+    /* BARRA DE FILTRO */
+    .fatura-actions {
+      display: flex;
+      gap: 12px;
+      align-items: flex-end;
+      flex-wrap: wrap;
+      background: rgba(255, 255, 255, 0.03);
+      padding: 16px;
+      border-radius: 10px;
+      border: 1px solid var(--card-border);
+      margin-bottom: 15px;
+    }
+
+    .fatura-actions .field {
+      flex: 1;
+      min-width: 150px;
+    }
+
+    /* FILTRO AVANÇADO */
+    .filtro-programacao {
+      background: rgba(59, 130, 246, 0.06);
+      border: 1px solid var(--card-border);
+      padding: 16px;
+      border-radius: 10px;
+      margin-bottom: 15px;
+    }
+
+    .filtro-programacao-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 10px;
+      flex-wrap: wrap;
+      margin-bottom: 14px;
+    }
+
+    .filtro-programacao-header strong {
+      color: var(--text-main);
+      font-size: 0.95em;
+    }
+
+    .filtro-botoes {
+      display: flex;
+      gap: 8px;
+      flex-wrap: wrap;
+    }
+
+    .btn-filtro-periodo {
+      width: auto;
+      padding: 8px 12px;
+      background: var(--card-bg);
+      border: 1px solid var(--card-border);
+      color: var(--text-muted);
+      border-radius: 7px;
+      cursor: pointer;
+      font-size: 0.82em;
+      font-weight: 600;
+    }
+
+    .btn-filtro-periodo:hover {
+      border-color: var(--accent-blue);
+      color: var(--text-main);
+    }
+
+    .btn-filtro-periodo.ativo {
+      background: var(--accent-blue);
+      border-color: var(--accent-blue);
+      color: #fff;
+    }
+
+    .resumo-filtro-programacao {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+      gap: 10px;
+      margin-top: 14px;
+    }
+
+    .resumo-filtro-item {
+      background: rgba(255,255,255,0.025);
+      border: 1px solid var(--card-border);
+      border-radius: 8px;
+      padding: 12px;
+    }
+
+    .resumo-filtro-item span {
+      display: block;
+      color: var(--text-muted);
+      font-size: 0.75em;
+      text-transform: uppercase;
+      margin-bottom: 5px;
+    }
+
+    .resumo-filtro-item strong {
+      font-size: 1.15em;
+    }
+
+    .resumo-filtro-item.pendente strong {
+      color: var(--accent-red);
+    }
+
+    .resumo-filtro-item.pago strong {
+      color: var(--accent-green);
+    }
+
+    .resumo-filtro-item.total strong {
+      color: var(--accent-blue);
+    }
+
+    .periodo-selecionado {
+      margin-top: 10px;
+      color: var(--text-muted);
+      font-size: 0.8em;
+    }
+
+    /* CONTADOR */
+    .selection-counter-bar {
+      background: rgba(59, 130, 246, 0.15);
+      border: 1px solid rgba(59, 130, 246, 0.4);
+      padding: 12px 18px;
+      border-radius: 8px;
+      margin-bottom: 15px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 10px;
+    }
+
+    .selection-counter-bar strong {
+      color: var(--accent-blue);
+      font-size: 1.1em;
+    }
 
     /* TABELA */
-    .table-responsive { overflow-x: auto; }
-    table { width: 100%; border-collapse: collapse; margin-top: 10px; }
-    th, td { border-bottom: 1px solid var(--card-border); padding: 12px; text-align: left; font-size: 0.9em; }
-    th { background-color: rgba(255, 255, 255, 0.02); color: var(--text-muted); font-weight: 600; cursor: pointer; user-select: none; }
-    th:hover { color: var(--accent-blue); }
-    tr.clickable-row { cursor: pointer; }
-    tr.clickable-row:hover { background-color: rgba(255, 255, 255, 0.03); }
-    tr.selected-row { background-color: rgba(59, 130, 246, 0.1) !important; }
+    .table-responsive {
+      overflow-x: auto;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 10px;
+    }
+
+    th,
+    td {
+      border-bottom: 1px solid var(--card-border);
+      padding: 12px;
+      text-align: left;
+      font-size: 0.9em;
+    }
+
+    th {
+      background-color: rgba(255, 255, 255, 0.02);
+      color: var(--text-muted);
+      font-weight: 600;
+      cursor: pointer;
+      user-select: none;
+    }
+
+    th:hover {
+      color: var(--accent-blue);
+    }
+
+    tr.clickable-row {
+      cursor: pointer;
+    }
+
+    tr.clickable-row:hover {
+      background-color: rgba(255, 255, 255, 0.03);
+    }
+
+    tr.selected-row {
+      background-color: rgba(59, 130, 246, 0.1) !important;
+    }
     
-    input[type="checkbox"] { width: 18px; height: 18px; cursor: pointer; accent-color: var(--accent-blue); }
+    input[type="checkbox"] {
+      width: 18px;
+      height: 18px;
+      cursor: pointer;
+      accent-color: var(--accent-blue);
+    }
 
     /* BADGES */
-    .badge { padding: 4px 8px; border-radius: 20px; font-size: 0.75em; font-weight: 700; text-transform: uppercase; }
-    .badge-pago { background: rgba(16, 185, 129, 0.15); color: var(--accent-green); border: 1px solid rgba(16, 185, 129, 0.3); }
-    .badge-pendente { background: rgba(239, 68, 68, 0.15); color: var(--accent-red); border: 1px solid rgba(239, 68, 68, 0.3); }
-    .badge-tipo { background: rgba(139, 92, 246, 0.15); color: var(--accent-purple); border: 1px solid rgba(139, 92, 246, 0.3); margin-left: 4px; }
+    .badge {
+      padding: 4px 8px;
+      border-radius: 20px;
+      font-size: 0.75em;
+      font-weight: 700;
+      text-transform: uppercase;
+    }
 
-    /* MODAL DE EDIÇÃO */
-    .modal-overlay { position: fixed; top:0; left:0; width:100%; height:100%; background: rgba(0,0,0,0.7); display:none; justify-content:center; align-items:center; z-index:1000; }
-    .modal { background: var(--card-bg); padding: 25px; border-radius: 12px; border: 1px solid var(--card-border); width: 90%; max-width: 500px; }
+    .badge-pago {
+      background: rgba(16, 185, 129, 0.15);
+      color: var(--accent-green);
+      border: 1px solid rgba(16, 185, 129, 0.3);
+    }
+
+    .badge-pendente {
+      background: rgba(239, 68, 68, 0.15);
+      color: var(--accent-red);
+      border: 1px solid rgba(239, 68, 68, 0.3);
+    }
+
+    .badge-tipo {
+      background: rgba(139, 92, 246, 0.15);
+      color: var(--accent-purple);
+      border: 1px solid rgba(139, 92, 246, 0.3);
+      margin-left: 4px;
+    }
+
+    /* MODAL */
+    .modal-overlay {
+      position: fixed;
+      top:0;
+      left:0;
+      width:100%;
+      height:100%;
+      background: rgba(0,0,0,0.7);
+      display:none;
+      justify-content:center;
+      align-items:center;
+      z-index:1000;
+    }
+
+    .modal {
+      background: var(--card-bg);
+      padding: 25px;
+      border-radius: 12px;
+      border: 1px solid var(--card-border);
+      width: 90%;
+      max-width: 500px;
+    }
+
+    @media (max-width: 600px) {
+      body {
+        padding: 10px;
+      }
+
+      .box {
+        padding: 16px;
+      }
+
+      .filtro-programacao-header {
+        align-items: flex-start;
+      }
+
+      .btn-filtro-periodo {
+        flex: 1;
+        min-width: 110px;
+      }
+    }
   </style>
 
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 </head>
+
 <body>
 
   <div class="container">
+
     <h1>💳 Dashboard Financeiro & Gestão de Faturas</h1>
 
-    <!-- CAIXA DE ALERTAS DE VENCIMENTO PRÓXIMO -->
+    <!-- ALERTA -->
     <div class="alert-box" id="alert-vencimento">
       <strong>⚠️ Alerta de Vencimento Próximo:</strong>
       <span id="alert-mensagem"></span>
     </div>
 
-    <!-- CARDS DE RESUMO PRINCIPAIS -->
+    <!-- RESUMOS PRINCIPAIS -->
     <div class="cards-grid">
+
       <div class="card limite">
         <h3>Limite Disponível Global</h3>
         <p id="resumo-limite">R$ 0,00</p>
-        <div class="subtext" id="subtext-limite-total">Total Cadastrado: R$ 0,00</div>
+        <div class="subtext" id="subtext-limite-total">
+          Total Cadastrado: R$ 0,00
+        </div>
       </div>
+
       <div class="card detalhe-limite">
-        <h3 id="titulo-limite-cartao">Limite Disponível (Filtro)</h3>
+        <h3 id="titulo-limite-cartao">
+          Limite Disponível (Filtro)
+        </h3>
         <p id="resumo-limite-cartao">R$ 0,00</p>
-        <div class="subtext" id="subtext-limite-filtro">Total do Cartão: R$ 0,00</div>
+        <div class="subtext" id="subtext-limite-filtro">
+          Total do Cartão: R$ 0,00
+        </div>
       </div>
+
       <div class="card atual">
         <h3>Fatura do Mês Atual</h3>
         <p id="resumo-fatura-atual">R$ 0,00</p>
-        <div class="subtext" id="subtext-quitacao">Projeção de Quitação: -</div>
+        <div class="subtext" id="subtext-quitacao">
+          Projeção de Quitação: -
+        </div>
       </div>
+
     </div>
 
-    <!-- DETALHAMENTO DE CADA CARTÃO DE CRÉDITO -->
+    <!-- STATUS DOS CARTÕES -->
     <div class="box">
-      <h2>💳 Status Detalhado dos Cartões <span id="info-quitacao-geral" style="font-size:0.7em; color:var(--text-muted); font-weight:400;"></span></h2>
-      <div class="cartoes-detalhe-grid" id="container-status-cartoes">
-        <!-- Renderizado dinamicamente -->
+
+      <h2>
+        💳 Status Detalhado dos Cartões
+        <span
+          id="info-quitacao-geral"
+          style="font-size:0.7em;color:var(--text-muted);font-weight:400;">
+        </span>
+      </h2>
+
+      <div
+        class="cartoes-detalhe-grid"
+        id="container-status-cartoes">
       </div>
+
     </div>
 
-    <!-- PROJEÇÃO DETALHADA E GRÁFICO DOS PRÓXIMOS 6 MESES -->
+    <!-- PROJEÇÃO -->
     <div class="box projecao-container">
-      <h2>📅 Planejamento de Faturas (Próximos 6 Meses)</h2>
-      
-      <!-- Gráfico Visual de Barras -->
-      <div class="chart-box" id="chart-projecao">
-        <!-- Gerado via JavaScript -->
+
+      <h2>
+        📅 Planejamento de Faturas
+        <span
+          id="titulo-projecao"
+          style="font-size:0.7em;color:var(--text-muted);font-weight:400;">
+          Próximos 6 Meses
+        </span>
+      </h2>
+
+      <div
+        class="chart-box"
+        id="chart-projecao">
       </div>
 
-      <div class="projecao-grid" id="container-projecao">
-        <!-- Gerado via JavaScript -->
+      <div
+        class="projecao-grid"
+        id="container-projecao">
       </div>
+
     </div>
 
-    <!-- FORMULÁRIO: NOVA COMPRA OU DESPESA FIXA -->
+    <!-- NOVA COMPRA -->
     <div class="box">
+
       <h2>+ Lançar Nova Compra ou Conta Fixa</h2>
+
       <form id="form-compra">
+
         <div>
           <label>Tipo de Lançamento</label>
-          <select id="t-tipo" onchange="alternarTipoForm()">
-            <option value="CARTAO">💳 Cartão de Crédito</option>
-            <option value="FIXA">🔌 Conta Fixa / Boleto (Água, Luz, etc)</option>
+
+          <select
+            id="t-tipo"
+            onchange="alternarTipoForm()">
+
+            <option value="CARTAO">
+              💳 Cartão de Crédito
+            </option>
+
+            <option value="FIXA">
+              🔌 Conta Fixa / Boleto
+            </option>
+
           </select>
         </div>
+
         <div>
           <label>Descrição</label>
-          <input type="text" id="t-descricao" placeholder="Ex: Mercado, Conta de Luz" required>
+
+          <input
+            type="text"
+            id="t-descricao"
+            placeholder="Ex: Mercado, Conta de Luz"
+            required>
         </div>
+
         <div>
           <label>Valor Total (R$)</label>
-          <input type="number" id="t-valor" step="0.01" placeholder="Ex: 300.00" required>
+
+          <input
+            type="number"
+            id="t-valor"
+            step="0.01"
+            placeholder="Ex: 300.00"
+            required>
         </div>
+
         <div>
           <label>Data da Compra / Emissão</label>
-          <input type="date" id="t-data" required>
+
+          <input
+            type="date"
+            id="t-data"
+            required>
         </div>
+
         <div id="wrapper-cartao">
+
           <label>Cartão</label>
+
           <select id="t-cartao">
             <option value="">Selecione...</option>
           </select>
+
         </div>
+
         <div id="wrapper-parcelas">
+
           <label>Nº de Parcelas</label>
-          <input type="number" id="t-parcelas" value="1" min="1">
+
+          <input
+            type="number"
+            id="t-parcelas"
+            value="1"
+            min="1">
+
         </div>
+
         <div>
+
           <label>Vencimento Fatura/Conta (Mês/Ano)</label>
-          <input type="month" id="t-primeiro-vencimento" required>
+
+          <input
+            type="month"
+            id="t-primeiro-vencimento"
+            required>
+
         </div>
+
         <div class="full-width">
-          <button type="submit" class="btn-green">Lançar Registro Financeiro</button>
+
+          <button
+            type="submit"
+            class="btn-green">
+
+            Lançar Registro Financeiro
+
+          </button>
+
         </div>
+
       </form>
+
     </div>
 
-    <!-- HISTÓRICO E GESTÃO DE FATURAS COM FILTROS -->
+    <!-- HISTÓRICO -->
     <div class="box">
+
       <h2>
-        <span>📋 Detalhamento das Compras e Faturas</span>
-        <span style="font-size: 0.75em; color: var(--accent-yellow);" id="total-exibido-filtro">Total Exibido: R$ 0,00</span>
+
+        <span>
+          📋 Detalhamento das Compras e Faturas
+        </span>
+
+        <span
+          style="font-size:0.75em;color:var(--accent-yellow);"
+          id="total-exibido-filtro">
+
+          Total Exibido: R$ 0,00
+
+        </span>
+
       </h2>
-      
-      <!-- BARRA DE FILTROS -->
-      <div class="fatura-actions">
-        <div class="field">
-          <label>Filtrar Cartão/Origem:</label>
-          <select id="filtro-cartao" onchange="carregarDados()">
-            <option value="TODOS">Todos os Cartões/Contas</option>
-          </select>
+
+      <!-- FILTROS -->
+      <div class="filtro-programacao">
+
+        <div class="filtro-programacao-header">
+
+          <strong>
+            🔎 Filtros da Programação Financeira
+          </strong>
+
+          <div class="filtro-botoes">
+
+            <button
+              type="button"
+              class="btn-filtro-periodo"
+              onclick="aplicarPeriodoRapido('ATUAL')">
+
+              📅 Este mês
+
+            </button>
+
+            <button
+              type="button"
+              class="btn-filtro-periodo"
+              onclick="aplicarPeriodoRapido('3')">
+
+              📆 Próximos 3 meses
+
+            </button>
+
+            <button
+              type="button"
+              class="btn-filtro-periodo ativo"
+              onclick="aplicarPeriodoRapido('6')">
+
+              📆 Próximos 6 meses
+
+            </button>
+
+            <button
+              type="button"
+              class="btn-filtro-periodo"
+              onclick="aplicarPeriodoRapido('12')">
+
+              📆 Próximos 12 meses
+
+            </button>
+
+          </div>
+
         </div>
-        <div class="field">
-          <label>Mês Vencimento:</label>
-          <input type="month" id="filtro-mes-vencimento" onchange="carregarDados()">
+
+        <div class="fatura-actions">
+
+          <div class="field">
+
+            <label>
+              💳 Cartão / Origem:
+            </label>
+
+            <select
+              id="filtro-cartao"
+              onchange="filtroAlterado()">
+
+              <option value="TODOS">
+                Todos os Cartões/Contas
+              </option>
+
+            </select>
+
+          </div>
+
+          <div class="field">
+
+            <label>
+              📅 Mês específico:
+            </label>
+
+            <input
+              type="month"
+              id="filtro-mes-vencimento"
+              onchange="filtroMesAlterado()">
+
+          </div>
+
+          <div class="field">
+
+            <label>
+              📊 Período:
+            </label>
+
+            <select
+              id="filtro-periodo"
+              onchange="filtroPeriodoAlterado()">
+
+              <option value="TODOS">
+                Todos os meses
+              </option>
+
+              <option value="ATUAL">
+                Este mês
+              </option>
+
+              <option value="3">
+                Próximos 3 meses
+              </option>
+
+              <option value="6" selected>
+                Próximos 6 meses
+              </option>
+
+              <option value="12">
+                Próximos 12 meses
+              </option>
+
+            </select>
+
+          </div>
+
+          <div class="field">
+
+            <label>
+              💰 Status:
+            </label>
+
+            <select
+              id="filtro-status"
+              onchange="filtroAlterado()">
+
+              <option value="TODOS">
+                Todos
+              </option>
+
+              <option value="PENDENTE" selected>
+                Pendentes
+              </option>
+
+              <option value="PAGO">
+                Pagos
+              </option>
+
+            </select>
+
+          </div>
+
+          <div class="field">
+
+            <label>
+              📌 Tipo:
+            </label>
+
+            <select
+              id="filtro-tipo"
+              onchange="filtroAlterado()">
+
+              <option value="TODOS">
+                Todos os Tipos
+              </option>
+
+              <option value="CARTAO">
+                Cartão de Crédito
+              </option>
+
+              <option value="FIXA">
+                Contas Fixas / Boletos
+              </option>
+
+            </select>
+
+          </div>
+
+          <div>
+
+            <button
+              type="button"
+              class="btn-gray"
+              onclick="limparFiltros()">
+
+              🔄 Limpar
+
+            </button>
+
+          </div>
+
         </div>
-        <div class="field">
-          <label>Status:</label>
-          <select id="filtro-status" onchange="carregarDados()">
-            <option value="TODOS">Todos os Status</option>
-            <option value="PENDENTE" selected>Apenas PENDENTES</option>
-            <option value="PAGO">Apenas PAGOS</option>
-          </select>
+
+        <div class="periodo-selecionado">
+
+          Visualização:
+
+          <strong id="descricao-periodo-filtro">
+            Próximos 6 meses
+          </strong>
+
         </div>
-        <div class="field">
-          <label>Tipo:</label>
-          <select id="filtro-tipo" onchange="carregarDados()">
-            <option value="TODOS">Todos os Tipos</option>
-            <option value="CARTAO">Cartão de Crédito</option>
-            <option value="FIXA">Contas Fixas / Boletos</option>
-          </select>
+
+        <!-- RESUMO DO FILTRO -->
+
+        <div class="resumo-filtro-programacao">
+
+          <div class="resumo-filtro-item pendente">
+
+            <span>
+              ⏳ Total Pendente
+            </span>
+
+            <strong id="filtro-total-pendente">
+              R$ 0,00
+            </strong>
+
+          </div>
+
+          <div class="resumo-filtro-item pago">
+
+            <span>
+              ✅ Total Pago
+            </span>
+
+            <strong id="filtro-total-pago">
+              R$ 0,00
+            </strong>
+
+          </div>
+
+          <div class="resumo-filtro-item total">
+
+            <span>
+              💰 Total da Programação
+            </span>
+
+            <strong id="filtro-total-geral">
+              R$ 0,00
+            </strong>
+
+          </div>
+
+          <div class="resumo-filtro-item">
+
+            <span>
+              📋 Lançamentos
+            </span>
+
+            <strong id="filtro-qtd-lancamentos">
+              0
+            </strong>
+
+          </div>
+
         </div>
-        <div>
-          <button type="button" class="btn-gray" onclick="limparFiltros()">🔄 Limpar Filtros</button>
-        </div>
+
       </div>
 
-      <!-- PAINEL EM TEMPO REAL DE SELEÇÃO -->
+      <!-- CONTADOR DE SELEÇÃO -->
+
       <div class="selection-counter-bar">
+
         <div>
-          📌 Marcados: <strong id="cnt-marcados">0 compras</strong> | Soma: <strong id="soma-marcados">R$ 0,00</strong>
+
+          📌 Marcados:
+
+          <strong id="cnt-marcados">
+            0 compras
+          </strong>
+
+          |
+
+          Soma:
+
+          <strong id="soma-marcados">
+            R$ 0,00
+          </strong>
+
         </div>
+
         <div>
-          <button type="button" class="btn-green" style="width:auto; padding: 8px 16px;" onclick="pagarMarcados()">✅ Pagar Selecionados</button>
+
+          <button
+            type="button"
+            class="btn-green"
+            style="width:auto;padding:8px 16px;"
+            onclick="pagarMarcados()">
+
+            ✅ Pagar Selecionados
+
+          </button>
+
         </div>
+
       </div>
 
-      <!-- TABELA DE TRANSAÇÕES -->
+      <!-- TABELA -->
+
       <div class="table-responsive">
+
         <table>
+
           <thead>
+
             <tr>
-              <th style="width: 40px;"><input type="checkbox" id="check-all" onchange="toggleSelectAll(this)"></th>
-              <th onclick="ordenarTabela('Data')">Data Compra ⇕</th>
-              <th onclick="ordenarTabela('Descricao')">Descrição ⇕</th>
-              <th onclick="ordenarTabela('Cartao')">Cartão / Origem ⇕</th>
-              <th>Parcela</th>
-              <th onclick="ordenarTabela('Vencimento')">Venc. Fatura ⇕</th>
-              <th onclick="ordenarTabela('Valor')">Valor Parcela ⇕</th>
-              <th>Status</th>
-              <th style="text-align: center;">Ações</th>
+
+              <th style="width:40px;">
+
+                <input
+                  type="checkbox"
+                  id="check-all"
+                  onchange="toggleSelectAll(this)">
+
+              </th>
+
+              <th onclick="ordenarTabela('Data')">
+                Data Compra ⇕
+              </th>
+
+              <th onclick="ordenarTabela('Descricao')">
+                Descrição ⇕
+              </th>
+
+              <th onclick="ordenarTabela('Cartao')">
+                Cartão / Origem ⇕
+              </th>
+
+              <th>
+                Parcela
+              </th>
+
+              <th onclick="ordenarTabela('Vencimento')">
+                Venc. Fatura ⇕
+              </th>
+
+              <th onclick="ordenarTabela('Valor')">
+                Valor Parcela ⇕
+              </th>
+
+              <th>
+                Status
+              </th>
+
+              <th style="text-align:center;">
+                Ações
+              </th>
+
             </tr>
+
           </thead>
+
           <tbody id="tabela-corpo">
-            <tr><td colspan="9" style="text-align:center; color: var(--text-muted);">Carregando dados...</td></tr>
+
+            <tr>
+
+              <td
+                colspan="9"
+                style="text-align:center;color:var(--text-muted);">
+
+                Carregando dados...
+
+              </td>
+
+            </tr>
+
           </tbody>
+
         </table>
+
       </div>
+
     </div>
 
-    <!-- SEÇÃO MOVIDA PARA O FINAL DA TELA: CADASTRAR/EDITAR CARTÃO -->
+    <!-- CADASTRO CARTÃO -->
+
     <div class="box">
-      <h2>⚙️ Cadastrar ou Atualizar Limite de Cartão</h2>
+
+      <h2>
+        ⚙️ Cadastrar ou Atualizar Limite de Cartão
+      </h2>
+
       <form id="form-cartao">
+
         <div>
-          <label>Nome do Cartão</label>
-          <input type="text" id="c-nome" placeholder="Ex: INTER, NUBANK" required>
+
+          <label>
+            Nome do Cartão
+          </label>
+
+          <input
+            type="text"
+            id="c-nome"
+            placeholder="Ex: INTER, NUBANK"
+            required>
+
         </div>
+
         <div>
-          <label>Limite Total (R$)</label>
-          <input type="number" id="c-limite" step="0.01" placeholder="Ex: 10790.00" required>
+
+          <label>
+            Limite Total (R$)
+          </label>
+
+          <input
+            type="number"
+            id="c-limite"
+            step="0.01"
+            placeholder="Ex: 10790.00"
+            required>
+
         </div>
+
         <div>
-          <label>Dia Fechamento Fatura</label>
-          <input type="number" id="c-fechamento" min="1" max="31" placeholder="Ex: 22" required>
+
+          <label>
+            Dia Fechamento Fatura
+          </label>
+
+          <input
+            type="number"
+            id="c-fechamento"
+            min="1"
+            max="31"
+            placeholder="Ex: 22"
+            required>
+
         </div>
+
         <div>
-          <label>Dia Vencimento Fatura</label>
-          <input type="number" id="c-vencimento" min="1" max="31" placeholder="Ex: 28" required>
+
+          <label>
+            Dia Vencimento Fatura
+          </label>
+
+          <input
+            type="number"
+            id="c-vencimento"
+            min="1"
+            max="31"
+            placeholder="Ex: 28"
+            required>
+
         </div>
+
         <div class="full-width">
-          <button type="submit" class="btn-blue">Salvar / Atualizar Limite do Cartão</button>
+
+          <button
+            type="submit"
+            class="btn-blue">
+
+            Salvar / Atualizar Limite do Cartão
+
+          </button>
+
         </div>
+
       </form>
+
     </div>
 
   </div>
 
-  <!-- MODAL PARA EDITAR TRANSAÇÃO -->
-  <div class="modal-overlay" id="modal-editar">
+  <!-- MODAL -->
+
+  <div
+    class="modal-overlay"
+    id="modal-editar">
+
     <div class="modal">
-      <h2>✏️ Editar Lançamento</h2>
+
+      <h2>
+        ✏️ Editar Lançamento
+      </h2>
+
       <form id="form-editar">
-        <input type="hidden" id="edit-id">
+
+        <input
+          type="hidden"
+          id="edit-id">
+
         <div>
-          <label>Tipo</label>
+
+          <label>
+            Tipo
+          </label>
+
           <select id="edit-tipo">
-            <option value="CARTAO">Cartão de Crédito</option>
-            <option value="FIXA">Conta Fixa / Boleto</option>
+
+            <option value="CARTAO">
+              Cartão de Crédito
+            </option>
+
+            <option value="FIXA">
+              Conta Fixa / Boleto
+            </option>
+
           </select>
+
         </div>
+
         <div>
-          <label>Descrição</label>
-          <input type="text" id="edit-descricao" required>
+
+          <label>
+            Descrição
+          </label>
+
+          <input
+            type="text"
+            id="edit-descricao"
+            required>
+
         </div>
+
         <div>
-          <label>Valor (R$)</label>
-          <input type="number" id="edit-valor" step="0.01" required>
+
+          <label>
+            Valor (R$)
+          </label>
+
+          <input
+            type="number"
+            id="edit-valor"
+            step="0.01"
+            required>
+
         </div>
+
         <div>
-          <label>Data da Compra</label>
-          <input type="date" id="edit-data" required>
+
+          <label>
+            Data da Compra
+          </label>
+
+          <input
+            type="date"
+            id="edit-data"
+            required>
+
         </div>
+
         <div>
-          <label>Data Vencimento</label>
-          <input type="date" id="edit-vencimento" required>
+
+          <label>
+            Data Vencimento
+          </label>
+
+          <input
+            type="date"
+            id="edit-vencimento"
+            required>
+
         </div>
+
         <div>
-          <label>Cartão / Origem</label>
-          <input type="text" id="edit-cartao" required>
+
+          <label>
+            Cartão / Origem
+          </label>
+
+          <input
+            type="text"
+            id="edit-cartao"
+            required>
+
         </div>
+
         <div>
-          <label>Status</label>
+
+          <label>
+            Status
+          </label>
+
           <select id="edit-status">
-            <option value="false">PENDENTE</option>
-            <option value="true">PAGO</option>
+
+            <option value="false">
+              PENDENTE
+            </option>
+
+            <option value="true">
+              PAGO
+            </option>
+
           </select>
+
         </div>
-        <div class="full-width" style="display:flex; gap:10px; margin-top:10px;">
-          <button type="submit" class="btn-blue">Salvar Alterações</button>
-          <button type="button" class="btn-delete" onclick="fecharModalEdit()">Cancelar</button>
+
+        <div
+          class="full-width"
+          style="display:flex;gap:10px;margin-top:10px;">
+
+          <button
+            type="submit"
+            class="btn-blue">
+
+            Salvar Alterações
+
+          </button>
+
+          <button
+            type="button"
+            class="btn-delete"
+            onclick="fecharModalEdit()">
+
+            Cancelar
+
+          </button>
+
         </div>
+
       </form>
+
     </div>
+
   </div>
 
   <script>
-    const SUPABASE_URL = 'https://jrzfsxvbzeudplmfrqna.supabase.co';
-    const SUPABASE_KEY = 'sb_publishable_8-eWESul1nNUDuFz6P1S9w_BlJDLu-i';
-    const supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+
+    /* =====================================================
+       SUPABASE
+       ===================================================== */
+
+    const SUPABASE_URL =
+      'https://jrzfsxvbzeudplmfrqna.supabase.co';
+
+    const SUPABASE_KEY =
+      'sb_publishable_8-eWESul1nNUDuFz6P1S9w_BlJDLu-i';
+
+    const supabaseClient =
+      supabase.createClient(
+        SUPABASE_URL,
+        SUPABASE_KEY
+      );
+
+
+    /* =====================================================
+       CONFIGURAÇÃO INICIAL
+       ===================================================== */
 
     const hojePadrao = new Date();
-    document.getElementById('t-data').valueAsDate = hojePadrao;
-    const mesAnoAtualStr = `${hojePadrao.getFullYear()}-${String(hojePadrao.getMonth() + 1).padStart(2, '0')}`;
-    document.getElementById('t-primeiro-vencimento').value = mesAnoAtualStr;
-    document.getElementById('filtro-mes-vencimento').value = mesAnoAtualStr;
+
+    document.getElementById('t-data').valueAsDate =
+      hojePadrao;
+
+    const mesAnoAtualStr =
+      `${hojePadrao.getFullYear()}-${String(
+        hojePadrao.getMonth() + 1
+      ).padStart(2, '0')}`;
+
+    document.getElementById(
+      't-primeiro-vencimento'
+    ).value = mesAnoAtualStr;
+
+    document.getElementById(
+      'filtro-mes-vencimento'
+    ).value = '';
+
+    document.getElementById(
+      'filtro-periodo'
+    ).value = '6';
+
 
     let dadosTransacoesCache = [];
-    let ordenacaoAtual = { coluna: 'Vencimento', asc: true };
+
+    let ordenacaoAtual = {
+      coluna: 'Vencimento',
+      asc: true
+    };
+
     let idsSelecionados = new Set();
 
-    // ALTERNAR TIPO NO FORMULÁRIO
+
+    /* =====================================================
+       ALTERNAR TIPO DO FORMULÁRIO
+       ===================================================== */
+
     function alternarTipoForm() {
-      const tipo = document.getElementById('t-tipo').value;
-      const wrapCartao = document.getElementById('wrapper-cartao');
-      const wrapParcelas = document.getElementById('wrapper-parcelas');
-      
+
+      const tipo =
+        document.getElementById('t-tipo').value;
+
+      const wrapCartao =
+        document.getElementById('wrapper-cartao');
+
+      const wrapParcelas =
+        document.getElementById('wrapper-parcelas');
+
       if (tipo === 'FIXA') {
+
         wrapCartao.style.display = 'none';
+
         wrapParcelas.style.display = 'none';
-        document.getElementById('t-cartao').required = false;
+
+        document.getElementById(
+          't-cartao'
+        ).required = false;
+
       } else {
+
         wrapCartao.style.display = 'block';
+
         wrapParcelas.style.display = 'block';
-        document.getElementById('t-cartao').required = true;
+
+        document.getElementById(
+          't-cartao'
+        ).required = true;
       }
     }
 
-    // CADASTRAR OU ATUALIZAR CARTÃO
-    document.getElementById('form-cartao').addEventListener('submit', async (e) => {
-      e.preventDefault();
-      const nome = document.getElementById('c-nome').value.toUpperCase();
-      const limite = parseFloat(document.getElementById('c-limite').value);
-      const fechamento = parseInt(document.getElementById('c-fechamento').value);
-      const vencimento = parseInt(document.getElementById('c-vencimento').value);
 
-      const { data: existente } = await supabaseClient.from('cartoes').select('*').eq('nome', nome).single();
+    /* =====================================================
+       CARTÕES
+       ===================================================== */
 
-      if (existente) {
-        const { error } = await supabaseClient.from('cartoes').update({
-          limite, dia_fechamento: fechamento, dia_vencimento: vencimento
-        }).eq('id', existente.id);
-        if (error) alert('Erro ao atualizar cartão: ' + error.message);
-        else alert('Limite e dados do cartão atualizados com sucesso!');
-      } else {
-        const { error } = await supabaseClient.from('cartoes').insert([{
-          nome, limite, dia_fechamento: fechamento, dia_vencimento: vencimento
-        }]);
-        if (error) alert('Erro ao cadastrar cartão: ' + error.message);
-        else alert('Cartão cadastrado com sucesso!');
-      }
+    document
+      .getElementById('form-cartao')
+      .addEventListener('submit', async (e) => {
 
-      document.getElementById('form-cartao').reset();
-      carregarCartoes();
-    });
+        e.preventDefault();
 
-    // CARREGAR CARTÕES
+        const nome =
+          document
+            .getElementById('c-nome')
+            .value
+            .toUpperCase();
+
+        const limite =
+          parseFloat(
+            document.getElementById('c-limite').value
+          );
+
+        const fechamento =
+          parseInt(
+            document.getElementById('c-fechamento').value
+          );
+
+        const vencimento =
+          parseInt(
+            document.getElementById('c-vencimento').value
+          );
+
+        const { data: existente } =
+          await supabaseClient
+            .from('cartoes')
+            .select('*')
+            .eq('nome', nome)
+            .single();
+
+        if (existente) {
+
+          const { error } =
+            await supabaseClient
+              .from('cartoes')
+              .update({
+                limite,
+                dia_fechamento: fechamento,
+                dia_vencimento: vencimento
+              })
+              .eq('id', existente.id);
+
+          if (error) {
+
+            alert(
+              'Erro ao atualizar cartão: ' +
+              error.message
+            );
+
+          } else {
+
+            alert(
+              'Limite e dados do cartão atualizados com sucesso!'
+            );
+          }
+
+        } else {
+
+          const { error } =
+            await supabaseClient
+              .from('cartoes')
+              .insert([{
+                nome,
+                limite,
+                dia_fechamento: fechamento,
+                dia_vencimento: vencimento
+              }]);
+
+          if (error) {
+
+            alert(
+              'Erro ao cadastrar cartão: ' +
+              error.message
+            );
+
+          } else {
+
+            alert(
+              'Cartão cadastrado com sucesso!'
+            );
+          }
+        }
+
+        document
+          .getElementById('form-cartao')
+          .reset();
+
+        carregarCartoes();
+
+      });
+
+
+    /* =====================================================
+       CARREGAR CARTÕES
+       ===================================================== */
+
     async function carregarCartoes() {
-      const { data } = await supabaseClient.from('cartoes').select('*');
-      const selectCompra = document.getElementById('t-cartao');
-      const selectFiltro = document.getElementById('filtro-cartao');
-      
-      const valorFiltroAtual = selectFiltro.value || 'TODOS';
 
-      selectCompra.innerHTML = '<option value="">Selecione...</option>';
-      selectFiltro.innerHTML = '<option value="TODOS">Todos os Cartões/Contas</option>';
+      const { data } =
+        await supabaseClient
+          .from('cartoes')
+          .select('*');
+
+      const selectCompra =
+        document.getElementById('t-cartao');
+
+      const selectFiltro =
+        document.getElementById('filtro-cartao');
+
+      const valorFiltroAtual =
+        selectFiltro.value || 'TODOS';
+
+      selectCompra.innerHTML =
+        '<option value="">Selecione...</option>';
+
+      selectFiltro.innerHTML =
+        '<option value="TODOS">Todos os Cartões/Contas</option>';
 
       if (data) {
+
         data.forEach(c => {
-          selectCompra.innerHTML += `<option value="${c.nome}">${c.nome}</option>`;
-          selectFiltro.innerHTML += `<option value="${c.nome}">${c.nome}</option>`;
+
+          selectCompra.innerHTML += `
+            <option value="${c.nome}">
+              ${c.nome}
+            </option>
+          `;
+
+          selectFiltro.innerHTML += `
+            <option value="${c.nome}">
+              ${c.nome}
+            </option>
+          `;
         });
       }
-      selectFiltro.value = valorFiltroAtual;
+
+      selectFiltro.value =
+        valorFiltroAtual;
+
       carregarDados();
     }
 
-    // LANÇAR COMPRA OU CONTA FIXA
-    document.getElementById('form-compra').addEventListener('submit', async (e) => {
-      e.preventDefault();
-      const tipo = document.getElementById('t-tipo').value;
-      const descricao = document.getElementById('t-descricao').value;
-      const valorTotal = parseFloat(document.getElementById('t-valor').value);
-      const dataCompraStr = document.getElementById('t-data').value;
-      const nomeCartao = tipo === 'CARTAO' ? document.getElementById('t-cartao').value : 'CONTA FIXA';
-      const totalParcelas = tipo === 'CARTAO' ? parseInt(document.getElementById('t-parcelas').value) : 1;
-      const primeiroVencStr = document.getElementById('t-primeiro-vencimento').value;
 
-      const [anoInicio, mesInicio] = primeiroVencStr.split('-').map(Number);
-      let diaVenc = 5;
+    /* =====================================================
+       NOVO LANÇAMENTO
+       ===================================================== */
 
-      if (tipo === 'CARTAO') {
-        const { data: cartaoData } = await supabaseClient.from('cartoes').select('*').eq('nome', nomeCartao).single();
-        if (cartaoData) diaVenc = cartaoData.dia_vencimento;
+    document
+      .getElementById('form-compra')
+      .addEventListener('submit', async (e) => {
+
+        e.preventDefault();
+
+        const tipo =
+          document.getElementById('t-tipo').value;
+
+        const descricao =
+          document.getElementById('t-descricao').value;
+
+        const valorTotal =
+          parseFloat(
+            document.getElementById('t-valor').value
+          );
+
+        const dataCompraStr =
+          document.getElementById('t-data').value;
+
+        const nomeCartao =
+          tipo === 'CARTAO'
+            ? document.getElementById('t-cartao').value
+            : 'CONTA FIXA';
+
+        const totalParcelas =
+          tipo === 'CARTAO'
+            ? parseInt(
+                document.getElementById('t-parcelas').value
+              )
+            : 1;
+
+        const primeiroVencStr =
+          document.getElementById(
+            't-primeiro-vencimento'
+          ).value;
+
+        const [anoInicio, mesInicio] =
+          primeiroVencStr
+            .split('-')
+            .map(Number);
+
+        let diaVenc = 5;
+
+        if (tipo === 'CARTAO') {
+
+          const { data: cartaoData } =
+            await supabaseClient
+              .from('cartoes')
+              .select('*')
+              .eq('nome', nomeCartao)
+              .single();
+
+          if (cartaoData) {
+            diaVenc =
+              cartaoData.dia_vencimento;
+          }
+
+        } else {
+
+          diaVenc =
+            parseInt(
+              dataCompraStr.split('-')[2]
+            ) || 10;
+        }
+
+        const valorParcela =
+          valorTotal / totalParcelas;
+
+        let lancamentos = [];
+
+        for (
+          let i = 0;
+          i < totalParcelas;
+          i++
+        ) {
+
+          let dataVenc =
+            new Date(
+              anoInicio,
+              (mesInicio - 1) + i,
+              diaVenc
+            );
+
+          const ano =
+            dataVenc.getFullYear();
+
+          const mes =
+            String(
+              dataVenc.getMonth() + 1
+            ).padStart(2, '0');
+
+          const dia =
+            String(
+              dataVenc.getDate()
+            ).padStart(2, '0');
+
+          lancamentos.push({
+
+            Descricao:
+              totalParcelas > 1
+                ? `${descricao} (${i + 1}/${totalParcelas})`
+                : descricao,
+
+            Valor: valorParcela,
+
+            Data: dataCompraStr,
+
+            Vencimento:
+              `${ano}-${mes}-${dia}`,
+
+            Cartao: nomeCartao,
+
+            Parcelas: totalParcelas,
+
+            Status: false,
+
+            Tipo: tipo
+
+          });
+        }
+
+        const { error } =
+          await supabaseClient
+            .from('transacoes')
+            .insert(lancamentos);
+
+        if (error) {
+
+          alert(
+            'Erro ao salvar compras: ' +
+            error.message
+          );
+
+        } else {
+
+          alert(
+            'Lançamento realizado com sucesso!'
+          );
+
+          document
+            .getElementById('form-compra')
+            .reset();
+
+          document
+            .getElementById('t-data')
+            .valueAsDate = new Date();
+
+          document
+            .getElementById(
+              't-primeiro-vencimento'
+            )
+            .value = mesAnoAtualStr;
+
+          alternarTipoForm();
+
+          carregarDados();
+        }
+
+      });
+
+
+    /* =====================================================
+       FUNÇÕES DOS FILTROS
+       ===================================================== */
+
+    function obterInicioPeriodo() {
+
+      const hoje = new Date();
+
+      return new Date(
+        hoje.getFullYear(),
+        hoje.getMonth(),
+        1,
+        0,
+        0,
+        0
+      );
+    }
+
+
+    function obterFimPeriodo() {
+
+      const periodo =
+        document.getElementById(
+          'filtro-periodo'
+        ).value;
+
+      if (periodo === 'TODOS') {
+        return null;
+      }
+
+      const hoje = new Date();
+
+      let quantidadeMeses;
+
+      if (periodo === 'ATUAL') {
+
+        quantidadeMeses = 1;
+
       } else {
-        diaVenc = parseInt(dataCompraStr.split('-')[2]) || 10;
+
+        quantidadeMeses =
+          parseInt(periodo);
       }
 
-      const valorParcela = valorTotal / totalParcelas;
-      let lancamentos = [];
+      return new Date(
+        hoje.getFullYear(),
+        hoje.getMonth() + quantidadeMeses,
+        0,
+        23,
+        59,
+        59
+      );
+    }
 
-      for (let i = 0; i < totalParcelas; i++) {
-        let dataVenc = new Date(anoInicio, (mesInicio - 1) + i, diaVenc);
-        const ano = dataVenc.getFullYear();
-        const mes = String(dataVenc.getMonth() + 1).padStart(2, '0');
-        const dia = String(dataVenc.getDate()).padStart(2, '0');
 
-        lancamentos.push({
-          Descricao: totalParcelas > 1 ? `${descricao} (${i + 1}/${totalParcelas})` : descricao,
-          Valor: valorParcela,
-          Data: dataCompraStr,
-          Vencimento: `${ano}-${mes}-${dia}`,
-          Cartao: nomeCartao,
-          Parcelas: totalParcelas,
-          Status: false,
-          Tipo: tipo
+    function transacaoDentroDoPeriodo(t) {
+
+      const filtroMes =
+        document.getElementById(
+          'filtro-mes-vencimento'
+        ).value;
+
+      const periodo =
+        document.getElementById(
+          'filtro-periodo'
+        ).value;
+
+      const dataString =
+        t.Vencimento || t.Data;
+
+      if (!dataString) {
+        return false;
+      }
+
+      /*
+       * Mês específico tem prioridade.
+       */
+      if (filtroMes) {
+
+        return (
+          dataString.substring(0, 7) ===
+          filtroMes
+        );
+      }
+
+      if (periodo === 'TODOS') {
+        return true;
+      }
+
+      const data =
+        new Date(
+          dataString + 'T00:00:00'
+        );
+
+      const inicio =
+        obterInicioPeriodo();
+
+      const fim =
+        obterFimPeriodo();
+
+      if (!fim) {
+        return true;
+      }
+
+      return (
+        data >= inicio &&
+        data <= fim
+      );
+    }
+
+
+    function aplicarPeriodoRapido(periodo) {
+
+      document
+        .getElementById(
+          'filtro-mes-vencimento'
+        ).value = '';
+
+      document
+        .getElementById(
+          'filtro-periodo'
+        ).value = periodo;
+
+      atualizarBotoesPeriodo();
+
+      carregarDados();
+    }
+
+
+    function filtroPeriodoAlterado() {
+
+      document
+        .getElementById(
+          'filtro-mes-vencimento'
+        ).value = '';
+
+      atualizarBotoesPeriodo();
+
+      carregarDados();
+    }
+
+
+    function filtroMesAlterado() {
+
+      const filtroMes =
+        document.getElementById(
+          'filtro-mes-vencimento'
+        ).value;
+
+      /*
+       * Se selecionar um mês específico,
+       * o período deixa de ser usado.
+       */
+      if (filtroMes) {
+
+        document
+          .getElementById(
+            'filtro-periodo'
+          ).value = 'TODOS';
+      }
+
+      atualizarBotoesPeriodo();
+
+      carregarDados();
+    }
+
+
+    function filtroAlterado() {
+
+      atualizarBotoesPeriodo();
+
+      carregarDados();
+    }
+
+
+    function atualizarBotoesPeriodo() {
+
+      const periodo =
+        document.getElementById(
+          'filtro-periodo'
+        ).value;
+
+      document
+        .querySelectorAll(
+          '.btn-filtro-periodo'
+        )
+        .forEach(btn => {
+
+          btn.classList.remove('ativo');
+
         });
+
+      const botoes =
+        document.querySelectorAll(
+          '.btn-filtro-periodo'
+        );
+
+      botoes.forEach(btn => {
+
+        const texto =
+          btn.textContent;
+
+        if (
+          periodo === 'ATUAL' &&
+          texto.includes('Este mês')
+        ) {
+          btn.classList.add('ativo');
+        }
+
+        if (
+          periodo === '3' &&
+          texto.includes('3 meses')
+        ) {
+          btn.classList.add('ativo');
+        }
+
+        if (
+          periodo === '6' &&
+          texto.includes('6 meses')
+        ) {
+          btn.classList.add('ativo');
+        }
+
+        if (
+          periodo === '12' &&
+          texto.includes('12 meses')
+        ) {
+          btn.classList.add('ativo');
+        }
+
+      });
+
+      atualizarDescricaoPeriodo();
+    }
+
+
+    function atualizarDescricaoPeriodo() {
+
+      const filtroMes =
+        document.getElementById(
+          'filtro-mes-vencimento'
+        ).value;
+
+      const periodo =
+        document.getElementById(
+          'filtro-periodo'
+        ).value;
+
+      const elemento =
+        document.getElementById(
+          'descricao-periodo-filtro'
+        );
+
+      if (filtroMes) {
+
+        const [ano, mes] =
+          filtroMes
+            .split('-')
+            .map(Number);
+
+        const data =
+          new Date(
+            ano,
+            mes - 1,
+            1
+          );
+
+        elemento.textContent =
+          data.toLocaleDateString(
+            'pt-BR',
+            {
+              month: 'long',
+              year: 'numeric'
+            }
+          );
+
+        return;
       }
 
-      const { error } = await supabaseClient.from('transacoes').insert(lancamentos);
-      if (error) alert('Erro ao salvar compras: ' + error.message);
-      else {
-        alert('Lançamento realizado com sucesso!');
-        document.getElementById('form-compra').reset();
-        document.getElementById('t-data').valueAsDate = new Date();
-        document.getElementById('t-primeiro-vencimento').value = mesAnoAtualStr;
-        alternarTipoForm();
-        carregarDados();
-      }
-    });
+      const nomes = {
 
-    // LIMPAR FILTROS
+        'TODOS':
+          'Todos os meses',
+
+        'ATUAL':
+          'Este mês',
+
+        '3':
+          'Próximos 3 meses',
+
+        '6':
+          'Próximos 6 meses',
+
+        '12':
+          'Próximos 12 meses'
+
+      };
+
+      elemento.textContent =
+        nomes[periodo] ||
+        'Todos os meses';
+    }
+
+
     function limparFiltros() {
-      document.getElementById('filtro-cartao').value = 'TODOS';
-      document.getElementById('filtro-mes-vencimento').value = '';
-      document.getElementById('filtro-status').value = 'TODOS';
-      document.getElementById('filtro-tipo').value = 'TODOS';
+
+      document
+        .getElementById(
+          'filtro-cartao'
+        ).value = 'TODOS';
+
+      document
+        .getElementById(
+          'filtro-mes-vencimento'
+        ).value = '';
+
+      document
+        .getElementById(
+          'filtro-periodo'
+        ).value = 'TODOS';
+
+      document
+        .getElementById(
+          'filtro-status'
+        ).value = 'TODOS';
+
+      document
+        .getElementById(
+          'filtro-tipo'
+        ).value = 'TODOS';
+
+      atualizarBotoesPeriodo();
+
       carregarDados();
     }
 
-    // ORDENAR TABELA
+
+    /* =====================================================
+       ORDENAÇÃO
+       ===================================================== */
+
     function ordenarTabela(coluna) {
-      if (ordenacaoAtual.coluna === coluna) {
-        ordenacaoAtual.asc = !ordenacaoAtual.asc;
+
+      if (
+        ordenacaoAtual.coluna === coluna
+      ) {
+
+        ordenacaoAtual.asc =
+          !ordenacaoAtual.asc;
+
       } else {
-        ordenacaoAtual.coluna = coluna;
-        ordenacaoAtual.asc = true;
+
+        ordenacaoAtual.coluna =
+          coluna;
+
+        ordenacaoAtual.asc =
+          true;
       }
+
       renderizarTabela();
     }
 
-    // CARREGAR DADOS COMPLETOS E CALCULAR
+
+    /* =====================================================
+       CARREGAR DADOS
+       ===================================================== */
+
     async function carregarDados() {
-      const { data: todasTransacoes } = await supabaseClient.from('transacoes').select('*');
-      const { data: cartoes } = await supabaseClient.from('cartoes').select('*');
 
-      dadosTransacoesCache = todasTransacoes || [];
+      const { data: todasTransacoes } =
+        await supabaseClient
+          .from('transacoes')
+          .select('*');
 
-      // CÁLCULOS GERAIS
+      const { data: cartoes } =
+        await supabaseClient
+          .from('cartoes')
+          .select('*');
+
+      dadosTransacoesCache =
+        todasTransacoes || [];
+
+
+      /* ===================================================
+         RESUMO DO FILTRO ATUAL
+         =================================================== */
+
+      let filtroTotalPendente = 0;
+      let filtroTotalPago = 0;
+      let filtroQtdLancamentos = 0;
+
+      const filtroCartaoAtual =
+        document.getElementById(
+          'filtro-cartao'
+        ).value;
+
+      const filtroTipoAtual =
+        document.getElementById(
+          'filtro-tipo'
+        ).value;
+
+      dadosTransacoesCache.forEach(t => {
+
+        if (
+          filtroCartaoAtual !== 'TODOS' &&
+          t.Cartao !== filtroCartaoAtual
+        ) {
+          return;
+        }
+
+        if (
+          filtroTipoAtual !== 'TODOS' &&
+          (t.Tipo || 'CARTAO') !== filtroTipoAtual
+        ) {
+          return;
+        }
+
+        if (
+          !transacaoDentroDoPeriodo(t)
+        ) {
+          return;
+        }
+
+        filtroQtdLancamentos++;
+
+        const valor =
+          Number(t.Valor) || 0;
+
+        if (t.Status) {
+
+          filtroTotalPago += valor;
+
+        } else {
+
+          filtroTotalPendente += valor;
+        }
+
+      });
+
+      const filtroTotalGeral =
+        filtroTotalPago +
+        filtroTotalPendente;
+
+      document.getElementById(
+        'filtro-total-pendente'
+      ).textContent =
+        `R$ ${filtroTotalPendente.toLocaleString(
+          'pt-BR',
+          { minimumFractionDigits: 2 }
+        )}`;
+
+      document.getElementById(
+        'filtro-total-pago'
+      ).textContent =
+        `R$ ${filtroTotalPago.toLocaleString(
+          'pt-BR',
+          { minimumFractionDigits: 2 }
+        )}`;
+
+      document.getElementById(
+        'filtro-total-geral'
+      ).textContent =
+        `R$ ${filtroTotalGeral.toLocaleString(
+          'pt-BR',
+          { minimumFractionDigits: 2 }
+        )}`;
+
+      document.getElementById(
+        'filtro-qtd-lancamentos'
+      ).textContent =
+        filtroQtdLancamentos.toLocaleString(
+          'pt-BR'
+        );
+
+      atualizarDescricaoPeriodo();
+
+
+      /* ===================================================
+         CÁLCULOS GERAIS
+         =================================================== */
+
       let limiteGlobalTotal = 0;
       let pendenteGlobalTotal = 0;
       let pendenteCartaoFiltro = 0;
@@ -536,397 +2351,1463 @@
       let faturaMesAtualSum = 0;
 
       const hoje = new Date();
-      const mesAtualIdx = hoje.getMonth();
-      const anoAtualIdx = hoje.getFullYear();
+
+      const mesAtualIdx =
+        hoje.getMonth();
+
+      const anoAtualIdx =
+        hoje.getFullYear();
+
       let alertaVencimentos = [];
-      let dataUltimoVencimento = new Date(0);
 
-      // Mapa de cartões
+      let dataUltimoVencimento =
+        new Date(0);
+
+
+      /* ===================================================
+         MAPA DE CARTÕES
+         =================================================== */
+
       let mapaCartoes = {};
+
       if (cartoes) {
+
         cartoes.forEach(c => {
-          limiteGlobalTotal += c.limite;
+
+          limiteGlobalTotal +=
+            Number(c.limite) || 0;
+
           mapaCartoes[c.nome] = {
-            limite: c.limite,
-            fechamento: c.dia_fechamento,
-            vencimento: c.dia_vencimento,
+
+            limite:
+              Number(c.limite) || 0,
+
+            fechamento:
+              c.dia_fechamento,
+
+            vencimento:
+              c.dia_vencimento,
+
             comprometido: 0
+
           };
+
         });
       }
 
-      const filtroCartao = document.getElementById('filtro-cartao').value;
-      if (mapaCartoes[filtroCartao]) {
-        limiteCartaoFiltro = mapaCartoes[filtroCartao].limite;
+
+      const filtroCartao =
+        document.getElementById(
+          'filtro-cartao'
+        ).value;
+
+      if (
+        mapaCartoes[filtroCartao]
+      ) {
+
+        limiteCartaoFiltro =
+          mapaCartoes[
+            filtroCartao
+          ].limite;
       }
 
-      // Projeção 6 meses
+
+      /* ===================================================
+         PROJEÇÃO
+         =================================================== */
+
+      const periodoProjecao =
+        document.getElementById(
+          'filtro-periodo'
+        ).value;
+
+      let quantidadeProjecao = 6;
+
+      if (periodoProjecao === '3') {
+        quantidadeProjecao = 3;
+      }
+
+      if (periodoProjecao === '6') {
+        quantidadeProjecao = 6;
+      }
+
+      if (periodoProjecao === '12') {
+        quantidadeProjecao = 12;
+      }
+
+      if (periodoProjecao === 'ATUAL') {
+        quantidadeProjecao = 1;
+      }
+
+      let inicioProjecao = 1;
+
+      if (
+        periodoProjecao === 'ATUAL'
+      ) {
+        inicioProjecao = 0;
+      }
+
       let projecaoMeses = [];
-      for (let i = 1; i <= 6; i++) {
-        let d = new Date(anoAtualIdx, mesAtualIdx + i, 1);
+
+      for (
+        let i = inicioProjecao;
+        i < inicioProjecao + quantidadeProjecao;
+        i++
+      ) {
+
+        let d =
+          new Date(
+            anoAtualIdx,
+            mesAtualIdx + i,
+            1
+          );
+
         projecaoMeses.push({
-          mes: d.getMonth(),
-          ano: d.getFullYear(),
-          nome: d.toLocaleDateString('pt-BR', { month: 'short', year: '2-digit' }),
+
+          mes:
+            d.getMonth(),
+
+          ano:
+            d.getFullYear(),
+
+          nome:
+            d.toLocaleDateString(
+              'pt-BR',
+              {
+                month: 'short',
+                year: '2-digit'
+              }
+            ),
+
           valor: 0
+
         });
       }
+
+
+      /* ===================================================
+         PROCESSAR TRANSAÇÕES
+         =================================================== */
 
       dadosTransacoesCache.forEach(t => {
-        const dtVenc = new Date((t.Vencimento || t.Data) + 'T00:00:00');
-        const isPago = t.Status;
 
-        if (dtVenc > dataUltimoVencimento) dataUltimoVencimento = dtVenc;
+        const dtVenc =
+          new Date(
+            (t.Vencimento || t.Data) +
+            'T00:00:00'
+          );
 
-        // Acumular comprometido do cartão
-        if (!isPago && t.Tipo !== 'FIXA' && mapaCartoes[t.Cartao]) {
-          mapaCartoes[t.Cartao].comprometido += t.Valor;
+        const isPago =
+          t.Status;
+
+        const valor =
+          Number(t.Valor) || 0;
+
+        if (
+          dtVenc >
+          dataUltimoVencimento
+        ) {
+
+          dataUltimoVencimento =
+            dtVenc;
         }
+
+
+        /* COMPROMETIDO */
+
+        if (
+          !isPago &&
+          t.Tipo !== 'FIXA' &&
+          mapaCartoes[t.Cartao]
+        ) {
+
+          mapaCartoes[
+            t.Cartao
+          ].comprometido += valor;
+        }
+
+
+        /* PENDENTES */
 
         if (!isPago) {
-          pendenteGlobalTotal += t.Valor;
 
-          if (filtroCartao !== 'TODOS' && t.Cartao === filtroCartao) {
-            pendenteCartaoFiltro += t.Valor;
+          pendenteGlobalTotal +=
+            valor;
+
+
+          if (
+            filtroCartao !== 'TODOS' &&
+            t.Cartao === filtroCartao
+          ) {
+
+            pendenteCartaoFiltro +=
+              valor;
           }
 
-          // Fatura Atual (mês vigente)
-          if (dtVenc.getMonth() === mesAtualIdx && dtVenc.getFullYear() === anoAtualIdx) {
-            if (filtroCartao === 'TODOS' || t.Cartao === filtroCartao) {
-              faturaMesAtualSum += t.Valor;
+
+          /* FATURA MÊS ATUAL */
+
+          if (
+            dtVenc.getMonth() ===
+              mesAtualIdx &&
+            dtVenc.getFullYear() ===
+              anoAtualIdx
+          ) {
+
+            if (
+              filtroCartao === 'TODOS' ||
+              t.Cartao === filtroCartao
+            ) {
+
+              faturaMesAtualSum +=
+                valor;
             }
           }
 
-          // Alerta 3 dias próximos do vencimento
-          const diffDias = Math.ceil((dtVenc - hoje) / (1000 * 60 * 60 * 24));
-          if (diffDias >= 0 && diffDias <= 3) {
-            alertaVencimentos.push(`${t.Descricao} (${t.Cartao}) em ${dtVenc.toLocaleDateString('pt-BR')} - R$ ${t.Valor.toFixed(2)}`);
+
+          /* ALERTA */
+
+          const diffDias =
+            Math.ceil(
+              (
+                dtVenc - hoje
+              ) /
+              (1000 * 60 * 60 * 24)
+            );
+
+          if (
+            diffDias >= 0 &&
+            diffDias <= 3
+          ) {
+
+            alertaVencimentos.push(
+
+              `${t.Descricao} (${t.Cartao}) em ` +
+              `${dtVenc.toLocaleDateString('pt-BR')} - ` +
+              `R$ ${valor.toFixed(2)}`
+
+            );
           }
 
-          // Projeção
+
+          /* PROJEÇÃO */
+
           projecaoMeses.forEach(m => {
-            if (dtVenc.getMonth() === m.mes && dtVenc.getFullYear() === m.ano) {
-              if (filtroCartao === 'TODOS' || t.Cartao === filtroCartao) {
-                m.valor += t.Valor;
+
+            if (
+              dtVenc.getMonth() ===
+                m.mes &&
+              dtVenc.getFullYear() ===
+                m.ano
+            ) {
+
+              if (
+                filtroCartao === 'TODOS' ||
+                t.Cartao === filtroCartao
+              ) {
+
+                m.valor +=
+                  valor;
               }
             }
+
           });
+
         }
+
       });
 
-      // RENDERIZAR CARDS DOS CARTÕES
-      const containerStatusCartoes = document.getElementById('container-status-cartoes');
-      containerStatusCartoes.innerHTML = '';
 
-      Object.keys(mapaCartoes).forEach(nome => {
-        const c = mapaCartoes[nome];
-        const disp = Math.max(0, c.limite - c.comprometido);
-        const pct = c.limite > 0 ? (c.comprometido / c.limite) * 100 : 0;
-        const isCritical = pct >= 80;
-        
-        // Fechado?
-        const diaHoje = hoje.getDate();
-        const isFechado = diaHoje >= c.fechamento && diaHoje < c.vencimento;
+      /* ===================================================
+         RENDERIZAR CARTÕES
+         =================================================== */
 
-        containerStatusCartoes.innerHTML += `
-          <div class="card ${isCritical ? 'critical' : ''}">
-            <span class="card-badge ${isFechado ? 'closed' : ''}">${isFechado ? '🔒 Fatura Fechada' : '🔓 Fatura Aberta'}</span>
-            <h3>${nome}</h3>
-            <p>R$ ${disp.toLocaleString('pt-BR', {minimumFractionDigits: 2})}</p>
-            <div class="subtext">
-              Comprometido: R$ ${c.comprometido.toLocaleString('pt-BR', {minimumFractionDigits: 2})} (${pct.toFixed(1)}%)
+      const containerStatusCartoes =
+        document.getElementById(
+          'container-status-cartoes'
+        );
+
+      containerStatusCartoes.innerHTML =
+        '';
+
+      Object.keys(mapaCartoes)
+        .forEach(nome => {
+
+          const c =
+            mapaCartoes[nome];
+
+          const disp =
+            Math.max(
+              0,
+              c.limite -
+              c.comprometido
+            );
+
+          const pct =
+            c.limite > 0
+              ? (
+                  c.comprometido /
+                  c.limite
+                ) * 100
+              : 0;
+
+          const isCritical =
+            pct >= 80;
+
+          const diaHoje =
+            hoje.getDate();
+
+          const isFechado =
+            diaHoje >= c.fechamento &&
+            diaHoje < c.vencimento;
+
+          containerStatusCartoes.innerHTML += `
+
+            <div class="card ${
+              isCritical
+                ? 'critical'
+                : ''
+            }">
+
+              <span
+                class="card-badge ${
+                  isFechado
+                    ? 'closed'
+                    : ''
+                }">
+
+                ${
+                  isFechado
+                    ? '🔒 Fatura Fechada'
+                    : '🔓 Fatura Aberta'
+                }
+
+              </span>
+
+              <h3>
+                ${nome}
+              </h3>
+
+              <p>
+                R$ ${disp.toLocaleString(
+                  'pt-BR',
+                  {
+                    minimumFractionDigits: 2
+                  }
+                )}
+              </p>
+
+              <div class="subtext">
+
+                Comprometido:
+                R$ ${c.comprometido.toLocaleString(
+                  'pt-BR',
+                  {
+                    minimumFractionDigits: 2
+                  }
+                )}
+
+                (${pct.toFixed(1)}%)
+
+              </div>
+
+              <div class="progress-bar-bg">
+
+                <div
+                  class="progress-bar-fill ${
+                    isCritical
+                      ? 'critical'
+                      : ''
+                  }"
+                  style="width:${Math.min(
+                    100,
+                    pct
+                  )}%;">
+                </div>
+
+              </div>
+
             </div>
-            <div class="progress-bar-bg">
-              <div class="progress-bar-fill ${isCritical ? 'critical' : ''}" style="width: ${Math.min(100, pct)}%;"></div>
-            </div>
-          </div>
-        `;
-      });
 
-      // RENDERIZAR PROJEÇÃO E GRÁFICO
-      const containerProjecao = document.getElementById('container-projecao');
-      const chartProjecao = document.getElementById('chart-projecao');
-      containerProjecao.innerHTML = '';
-      chartProjecao.innerHTML = '';
+          `;
 
-      const maxValorProj = Math.max(...projecaoMeses.map(m => m.valor), 1);
+        });
+
+
+      /* ===================================================
+         RENDERIZAR PROJEÇÃO
+         =================================================== */
+
+      const containerProjecao =
+        document.getElementById(
+          'container-projecao'
+        );
+
+      const chartProjecao =
+        document.getElementById(
+          'chart-projecao'
+        );
+
+      containerProjecao.innerHTML =
+        '';
+
+      chartProjecao.innerHTML =
+        '';
+
+      const maxValorProj =
+        Math.max(
+          ...projecaoMeses.map(
+            m => m.valor
+          ),
+          1
+        );
+
 
       projecaoMeses.forEach(m => {
+
         containerProjecao.innerHTML += `
+
           <div class="card-mes">
-            <span>${m.nome}</span>
-            <strong>R$ ${m.valor.toLocaleString('pt-BR', {minimumFractionDigits: 2})}</strong>
+
+            <span>
+              ${m.nome}
+            </span>
+
+            <strong>
+              R$ ${m.valor.toLocaleString(
+                'pt-BR',
+                {
+                  minimumFractionDigits: 2
+                }
+              )}
+            </strong>
+
           </div>
+
         `;
 
-        const heightPct = (m.valor / maxValorProj) * 100;
+        const heightPct =
+          (m.valor /
+            maxValorProj) *
+          100;
+
         chartProjecao.innerHTML += `
-          <div class="chart-bar-wrap" title="${m.nome}: R$ ${m.valor.toFixed(2)}">
-            <div class="chart-bar" style="height: ${Math.max(4, heightPct)}%;"></div>
-            <span class="chart-label">${m.nome}</span>
+
+          <div
+            class="chart-bar-wrap"
+            title="${m.nome}: R$ ${m.valor.toFixed(2)}">
+
+            <div
+              class="chart-bar"
+              style="height:${Math.max(
+                4,
+                heightPct
+              )}%;">
+            </div>
+
+            <span class="chart-label">
+              ${m.nome}
+            </span>
+
           </div>
+
         `;
       });
 
-      // ATUALIZAR RESUMOS SUPERIORES
-      const disponivelGlobal = Math.max(0, limiteGlobalTotal - pendenteGlobalTotal);
-      document.getElementById('resumo-limite').textContent = `R$ ${disponivelGlobal.toLocaleString('pt-BR', {minimumFractionDigits: 2})}`;
-      document.getElementById('subtext-limite-total').textContent = `Total Cadastrado: R$ ${limiteGlobalTotal.toLocaleString('pt-BR', {minimumFractionDigits: 2})}`;
 
-      if (filtroCartao !== 'TODOS' && mapaCartoes[filtroCartao]) {
-        const disponivelFiltro = Math.max(0, limiteCartaoFiltro - pendenteCartaoFiltro);
-        document.getElementById('titulo-limite-cartao').textContent = `Limite Disponível (${filtroCartao})`;
-        document.getElementById('resumo-limite-cartao').textContent = `R$ ${disponivelFiltro.toLocaleString('pt-BR', {minimumFractionDigits: 2})}`;
-        document.getElementById('subtext-limite-filtro').textContent = `Total do Cartão: R$ ${limiteCartaoFiltro.toLocaleString('pt-BR', {minimumFractionDigits: 2})}`;
+      /* TÍTULO PROJEÇÃO */
+
+      const nomesProjecao = {
+
+        'ATUAL':
+          'Mês Atual',
+
+        '3':
+          'Próximos 3 Meses',
+
+        '6':
+          'Próximos 6 Meses',
+
+        '12':
+          'Próximos 12 Meses',
+
+        'TODOS':
+          'Próximos 6 Meses'
+
+      };
+
+      document.getElementById(
+        'titulo-projecao'
+      ).textContent =
+        nomesProjecao[
+          periodoProjecao
+        ] || 'Próximos 6 Meses';
+
+
+      /* ===================================================
+         RESUMOS SUPERIORES
+         =================================================== */
+
+      const disponivelGlobal =
+        Math.max(
+          0,
+          limiteGlobalTotal -
+          pendenteGlobalTotal
+        );
+
+      document.getElementById(
+        'resumo-limite'
+      ).textContent =
+        `R$ ${disponivelGlobal.toLocaleString(
+          'pt-BR',
+          {
+            minimumFractionDigits: 2
+          }
+        )}`;
+
+      document.getElementById(
+        'subtext-limite-total'
+      ).textContent =
+        `Total Cadastrado: R$ ${
+          limiteGlobalTotal.toLocaleString(
+            'pt-BR',
+            {
+              minimumFractionDigits: 2
+            }
+          )
+        }`;
+
+
+      if (
+        filtroCartao !== 'TODOS' &&
+        mapaCartoes[filtroCartao]
+      ) {
+
+        const disponivelFiltro =
+          Math.max(
+            0,
+            limiteCartaoFiltro -
+            pendenteCartaoFiltro
+          );
+
+        document.getElementById(
+          'titulo-limite-cartao'
+        ).textContent =
+          `Limite Disponível (${filtroCartao})`;
+
+        document.getElementById(
+          'resumo-limite-cartao'
+        ).textContent =
+          `R$ ${
+            disponivelFiltro.toLocaleString(
+              'pt-BR',
+              {
+                minimumFractionDigits: 2
+              }
+            )
+          }`;
+
+        document.getElementById(
+          'subtext-limite-filtro'
+        ).textContent =
+          `Total do Cartão: R$ ${
+            limiteCartaoFiltro.toLocaleString(
+              'pt-BR',
+              {
+                minimumFractionDigits: 2
+              }
+            )
+          }`;
+
       } else {
-        document.getElementById('titulo-limite-cartao').textContent = 'Limite Disponível (Filtro)';
-        document.getElementById('resumo-limite-cartao').textContent = `R$ ${disponivelGlobal.toLocaleString('pt-BR', {minimumFractionDigits: 2})}`;
-        document.getElementById('subtext-limite-filtro').textContent = `Total Geral: R$ ${limiteGlobalTotal.toLocaleString('pt-BR', {minimumFractionDigits: 2})}`;
+
+        document.getElementById(
+          'titulo-limite-cartao'
+        ).textContent =
+          'Limite Disponível (Filtro)';
+
+        document.getElementById(
+          'resumo-limite-cartao'
+        ).textContent =
+          `R$ ${
+            disponivelGlobal.toLocaleString(
+              'pt-BR',
+              {
+                minimumFractionDigits: 2
+              }
+            )
+          }`;
+
+        document.getElementById(
+          'subtext-limite-filtro'
+        ).textContent =
+          `Total Geral: ${
+            limiteGlobalTotal.toLocaleString(
+              'pt-BR',
+              {
+                minimumFractionDigits: 2
+              }
+            )
+          }`;
       }
 
-      document.getElementById('resumo-fatura-atual').textContent = `R$ ${faturaMesAtualSum.toLocaleString('pt-BR', {minimumFractionDigits: 2})}`;
-      
-      if (dataUltimoVencimento.getTime() > 0) {
-        const strQuitacao = dataUltimoVencimento.toLocaleDateString('pt-BR', { month: 'long', year: 'numeric' });
-        document.getElementById('subtext-quitacao').textContent = `Projeção de Quitação: ${strQuitacao}`;
+
+      document.getElementById(
+        'resumo-fatura-atual'
+      ).textContent =
+        `R$ ${
+          faturaMesAtualSum.toLocaleString(
+            'pt-BR',
+            {
+              minimumFractionDigits: 2
+            }
+          )
+        }`;
+
+
+      if (
+        dataUltimoVencimento.getTime() > 0
+      ) {
+
+        const strQuitacao =
+          dataUltimoVencimento
+            .toLocaleDateString(
+              'pt-BR',
+              {
+                month: 'long',
+                year: 'numeric'
+              }
+            );
+
+        document.getElementById(
+          'subtext-quitacao'
+        ).textContent =
+          `Projeção de Quitação: ${strQuitacao}`;
       }
 
-      // ALERTAS
-      const boxAlert = document.getElementById('alert-vencimento');
-      if (alertaVencimentos.length > 0) {
-        boxAlert.style.display = 'block';
-        document.getElementById('alert-mensagem').textContent = alertaVencimentos.join(' | ');
+
+      /* ===================================================
+         ALERTAS
+         =================================================== */
+
+      const boxAlert =
+        document.getElementById(
+          'alert-vencimento'
+        );
+
+      if (
+        alertaVencimentos.length > 0
+      ) {
+
+        boxAlert.style.display =
+          'block';
+
+        document.getElementById(
+          'alert-mensagem'
+        ).textContent =
+          alertaVencimentos.join(
+            ' | '
+          );
+
       } else {
-        boxAlert.style.display = 'none';
+
+        boxAlert.style.display =
+          'none';
       }
+
 
       renderizarTabela();
+
+      atualizarBotoesPeriodo();
     }
 
-    // RENDERIZAR TABELA FILTRADA E ORDENADA
+
+    /* =====================================================
+       RENDERIZAR TABELA
+       ===================================================== */
+
     function renderizarTabela() {
-      const filtroCartao = document.getElementById('filtro-cartao').value;
-      const filtroMesVenc = document.getElementById('filtro-mes-vencimento').value;
-      const filtroStatus = document.getElementById('filtro-status').value;
-      const filtroTipo = document.getElementById('filtro-tipo').value;
 
-      let transacoesFiltradas = dadosTransacoesCache.filter(t => {
-        if (filtroCartao !== 'TODOS' && t.Cartao !== filtroCartao) return false;
-        if (filtroStatus === 'PENDENTE' && t.Status) return false;
-        if (filtroStatus === 'PAGO' && !t.Status) return false;
-        if (filtroTipo !== 'TODOS' && (t.Tipo || 'CARTAO') !== filtroTipo) return false;
+      const filtroCartao =
+        document.getElementById(
+          'filtro-cartao'
+        ).value;
 
-        if (filtroMesVenc) {
-          const dtVencStr = (t.Vencimento || t.Data).substring(0, 7);
-          if (dtVencStr !== filtroMesVenc) return false;
+      const filtroStatus =
+        document.getElementById(
+          'filtro-status'
+        ).value;
+
+      const filtroTipo =
+        document.getElementById(
+          'filtro-tipo'
+        ).value;
+
+
+      let transacoesFiltradas =
+        dadosTransacoesCache.filter(t => {
+
+          if (
+            filtroCartao !== 'TODOS' &&
+            t.Cartao !== filtroCartao
+          ) {
+            return false;
+          }
+
+          if (
+            filtroStatus === 'PENDENTE' &&
+            t.Status
+          ) {
+            return false;
+          }
+
+          if (
+            filtroStatus === 'PAGO' &&
+            !t.Status
+          ) {
+            return false;
+          }
+
+          if (
+            filtroTipo !== 'TODOS' &&
+            (t.Tipo || 'CARTAO') !== filtroTipo
+          ) {
+            return false;
+          }
+
+          if (
+            !transacaoDentroDoPeriodo(t)
+          ) {
+            return false;
+          }
+
+          return true;
+
+        });
+
+
+      /* ORDENAÇÃO */
+
+      transacoesFiltradas.sort(
+        (a, b) => {
+
+          let valA =
+            a[ordenacaoAtual.coluna];
+
+          let valB =
+            b[ordenacaoAtual.coluna];
+
+          if (
+            typeof valA === 'string'
+          ) {
+            valA =
+              valA.toLowerCase();
+          }
+
+          if (
+            typeof valB === 'string'
+          ) {
+            valB =
+              valB.toLowerCase();
+          }
+
+          if (valA < valB) {
+
+            return ordenacaoAtual.asc
+              ? -1
+              : 1;
+          }
+
+          if (valA > valB) {
+
+            return ordenacaoAtual.asc
+              ? 1
+              : -1;
+          }
+
+          return 0;
         }
+      );
 
-        return true;
-      });
 
-      // ORDENAÇÃO
-      transacoesFiltradas.sort((a, b) => {
-        let valA = a[ordenacaoAtual.coluna];
-        let valB = b[ordenacaoAtual.coluna];
-        
-        if (typeof valA === 'string') valA = valA.toLowerCase();
-        if (typeof valB === 'string') valB = valB.toLowerCase();
+      const tbody =
+        document.getElementById(
+          'tabela-corpo'
+        );
 
-        if (valA < valB) return ordenacaoAtual.asc ? -1 : 1;
-        if (valA > valB) return ordenacaoAtual.asc ? 1 : -1;
-        return 0;
-      });
-
-      const tbody = document.getElementById('tabela-corpo');
       tbody.innerHTML = '';
 
       let totalSomaExibido = 0;
 
-      if (transacoesFiltradas.length === 0) {
-        tbody.innerHTML = '<tr><td colspan="9" style="text-align:center; color: var(--text-muted);">Nenhum lançamento encontrado para os filtros selecionados.</td></tr>';
+
+      if (
+        transacoesFiltradas.length === 0
+      ) {
+
+        tbody.innerHTML = `
+
+          <tr>
+
+            <td
+              colspan="9"
+              style="text-align:center;color:var(--text-muted);">
+
+              Nenhum lançamento encontrado
+              para os filtros selecionados.
+
+            </td>
+
+          </tr>
+
+        `;
+
       } else {
+
         transacoesFiltradas.forEach(t => {
-          totalSomaExibido += t.Valor;
-          const isSelected = idsSelecionados.has(t.id);
-          const isPago = t.Status;
+
+          const valor =
+            Number(t.Valor) || 0;
+
+          totalSomaExibido +=
+            valor;
+
+          const isSelected =
+            idsSelecionados.has(t.id);
+
+          const isPago =
+            t.Status;
+
 
           tbody.innerHTML += `
-            <tr class="clickable-row ${isSelected ? 'selected-row' : ''}" onclick="toggleSelectRow(event, ${t.id})">
+
+            <tr
+              class="clickable-row ${
+                isSelected
+                  ? 'selected-row'
+                  : ''
+              }"
+              onclick="toggleSelectRow(event, ${t.id})">
+
               <td>
-                <input type="checkbox" ${isSelected ? 'checked' : ''} onclick="event.stopPropagation(); toggleSelectId(${t.id})">
+
+                <input
+                  type="checkbox"
+                  ${
+                    isSelected
+                      ? 'checked'
+                      : ''
+                  }
+                  onclick="
+                    event.stopPropagation();
+                    toggleSelectId(${t.id})
+                  ">
+
               </td>
-              <td>${t.Data ? t.Data.split('-').reverse().join('/') : '-'}</td>
+
               <td>
+                ${
+                  t.Data
+                    ? t.Data
+                        .split('-')
+                        .reverse()
+                        .join('/')
+                    : '-'
+                }
+              </td>
+
+              <td>
+
                 ${t.Descricao}
-                ${t.Tipo === 'FIXA' ? '<span class="badge badge-tipo">FIXA</span>' : ''}
+
+                ${
+                  t.Tipo === 'FIXA'
+                    ? '<span class="badge badge-tipo">FIXA</span>'
+                    : ''
+                }
+
               </td>
-              <td><strong>${t.Cartao}</strong></td>
-              <td>${t.Parcelas || 1}x</td>
-              <td>${t.Vencimento ? t.Vencimento.split('-').reverse().join('/') : '-'}</td>
-              <td>R$ ${t.Valor.toLocaleString('pt-BR', {minimumFractionDigits: 2})}</td>
-              <td><span class="badge ${isPago ? 'badge-pago' : 'badge-pendente'}">${isPago ? 'PAGO' : 'PENDENTE'}</span></td>
-              <td style="text-align: center;" onclick="event.stopPropagation();">
-                <button class="btn-edit" onclick='abrirModalEdit(${JSON.stringify(t)})' title="Editar">✏️</button>
-                <button class="btn-clone" onclick='duplicarLancamento(${JSON.stringify(t)})' title="Duplicar">📋</button>
-                <button class="btn-delete" onclick="excluirTransacao(${t.id})" title="Excluir">🗑️</button>
+
+              <td>
+                <strong>
+                  ${t.Cartao}
+                </strong>
               </td>
+
+              <td>
+                ${t.Parcelas || 1}x
+              </td>
+
+              <td>
+                ${
+                  t.Vencimento
+                    ? t.Vencimento
+                        .split('-')
+                        .reverse()
+                        .join('/')
+                    : '-'
+                }
+              </td>
+
+              <td>
+
+                R$ ${valor.toLocaleString(
+                  'pt-BR',
+                  {
+                    minimumFractionDigits: 2
+                  }
+                )}
+
+              </td>
+
+              <td>
+
+                <span
+                  class="badge ${
+                    isPago
+                      ? 'badge-pago'
+                      : 'badge-pendente'
+                  }">
+
+                  ${
+                    isPago
+                      ? 'PAGO'
+                      : 'PENDENTE'
+                  }
+
+                </span>
+
+              </td>
+
+              <td
+                style="text-align:center;"
+                onclick="event.stopPropagation();">
+
+                <button
+                  class="btn-edit"
+                  onclick='abrirModalEdit(${JSON.stringify(t)})'
+                  title="Editar">
+
+                  ✏️
+
+                </button>
+
+                <button
+                  class="btn-clone"
+                  onclick='duplicarLancamento(${JSON.stringify(t)})'
+                  title="Duplicar">
+
+                  📋
+
+                </button>
+
+                <button
+                  class="btn-delete"
+                  onclick="excluirTransacao(${t.id})"
+                  title="Excluir">
+
+                  🗑️
+
+                </button>
+
+              </td>
+
             </tr>
+
           `;
         });
       }
 
-      document.getElementById('total-exibido-filtro').textContent = `Total Exibido: R$ ${totalSomaExibido.toLocaleString('pt-BR', {minimumFractionDigits: 2})}`;
+
+      document.getElementById(
+        'total-exibido-filtro'
+      ).textContent =
+        `Total Exibido: R$ ${
+          totalSomaExibido.toLocaleString(
+            'pt-BR',
+            {
+              minimumFractionDigits: 2
+            }
+          )
+        }`;
+
+
       atualizarContadorSelecao();
     }
 
-    // LÓGICA DE SELEÇÃO E CHECKBOX
+
+    /* =====================================================
+       SELEÇÃO
+       ===================================================== */
+
     function toggleSelectId(id) {
-      if (idsSelecionados.has(id)) {
+
+      if (
+        idsSelecionados.has(id)
+      ) {
+
         idsSelecionados.delete(id);
+
       } else {
+
         idsSelecionados.add(id);
       }
+
       renderizarTabela();
     }
 
+
     function toggleSelectRow(e, id) {
-      if (e.target.tagName === 'BUTTON' || e.target.tagName === 'INPUT') return;
+
+      if (
+        e.target.tagName === 'BUTTON' ||
+        e.target.tagName === 'INPUT'
+      ) {
+        return;
+      }
+
       toggleSelectId(id);
     }
 
+
     function toggleSelectAll(master) {
-      const filtroCartao = document.getElementById('filtro-cartao').value;
-      const filtroMesVenc = document.getElementById('filtro-mes-vencimento').value;
-      const filtroStatus = document.getElementById('filtro-status').value;
-      const filtroTipo = document.getElementById('filtro-tipo').value;
+
+      const filtroCartao =
+        document.getElementById(
+          'filtro-cartao'
+        ).value;
+
+      const filtroStatus =
+        document.getElementById(
+          'filtro-status'
+        ).value;
+
+      const filtroTipo =
+        document.getElementById(
+          'filtro-tipo'
+        ).value;
+
 
       dadosTransacoesCache.forEach(t => {
-        if (filtroCartao !== 'TODOS' && t.Cartao !== filtroCartao) return;
-        if (filtroStatus === 'PENDENTE' && t.Status) return;
-        if (filtroStatus === 'PAGO' && !t.Status) return;
-        if (filtroTipo !== 'TODOS' && (t.Tipo || 'CARTAO') !== filtroTipo) return;
-        if (filtroMesVenc && (t.Vencimento || t.Data).substring(0, 7) !== filtroMesVenc) return;
 
-        if (master.checked) idsSelecionados.add(t.id);
-        else idsSelecionados.delete(t.id);
+        if (
+          filtroCartao !== 'TODOS' &&
+          t.Cartao !== filtroCartao
+        ) {
+          return;
+        }
+
+        if (
+          filtroStatus === 'PENDENTE' &&
+          t.Status
+        ) {
+          return;
+        }
+
+        if (
+          filtroStatus === 'PAGO' &&
+          !t.Status
+        ) {
+          return;
+        }
+
+        if (
+          filtroTipo !== 'TODOS' &&
+          (t.Tipo || 'CARTAO') !== filtroTipo
+        ) {
+          return;
+        }
+
+        if (
+          !transacaoDentroDoPeriodo(t)
+        ) {
+          return;
+        }
+
+
+        if (master.checked) {
+
+          idsSelecionados.add(
+            t.id
+          );
+
+        } else {
+
+          idsSelecionados.delete(
+            t.id
+          );
+        }
+
       });
 
       renderizarTabela();
     }
 
+
     function atualizarContadorSelecao() {
+
       let qtd = 0;
+
       let soma = 0;
 
       dadosTransacoesCache.forEach(t => {
-        if (idsSelecionados.has(t.id)) {
+
+        if (
+          idsSelecionados.has(t.id)
+        ) {
+
           qtd++;
-          soma += t.Valor;
+
+          soma +=
+            Number(t.Valor) || 0;
         }
+
       });
 
-      document.getElementById('cnt-marcados').textContent = `${qtd} compras`;
-      document.getElementById('soma-marcados').textContent = `R$ ${soma.toLocaleString('pt-BR', {minimumFractionDigits: 2})}`;
+      document.getElementById(
+        'cnt-marcados'
+      ).textContent =
+        `${qtd} compras`;
+
+      document.getElementById(
+        'soma-marcados'
+      ).textContent =
+        `R$ ${soma.toLocaleString(
+          'pt-BR',
+          {
+            minimumFractionDigits: 2
+          }
+        )}`;
     }
 
-    // PAGAR SELECIONADOS
+
+    /* =====================================================
+       PAGAR SELECIONADOS
+       ===================================================== */
+
     async function pagarMarcados() {
-      if (idsSelecionados.size === 0) {
-        alert('Selecione pelo menos uma compra/fatura marcando o checkbox.');
+
+      if (
+        idsSelecionados.size === 0
+      ) {
+
+        alert(
+          'Selecione pelo menos uma compra/fatura marcando o checkbox.'
+        );
+
         return;
       }
 
       let soma = 0;
+
       dadosTransacoesCache.forEach(t => {
-        if (idsSelecionados.has(t.id)) soma += t.Valor;
+
+        if (
+          idsSelecionados.has(t.id)
+        ) {
+
+          soma +=
+            Number(t.Valor) || 0;
+        }
+
       });
 
-      const confirmacao = confirm(`Deseja confirmar o pagamento de ${idsSelecionados.size} compras marcadas?\n\nValor Total: R$ ${soma.toLocaleString('pt-BR', {minimumFractionDigits: 2})}`);
+
+      const confirmacao =
+        confirm(
+          `Deseja confirmar o pagamento de ${idsSelecionados.size} compras marcadas?\n\n` +
+          `Valor Total: R$ ${soma.toLocaleString(
+            'pt-BR',
+            {
+              minimumFractionDigits: 2
+            }
+          )}`
+        );
+
 
       if (confirmacao) {
-        const arrayIds = Array.from(idsSelecionados);
 
-        const { error } = await supabaseClient
-          .from('transacoes')
-          .update({ Status: true })
-          .in('id', arrayIds);
+        const arrayIds =
+          Array.from(
+            idsSelecionados
+          );
 
-        if (error) alert('Erro ao atualizar status: ' + error.message);
-        else {
-          alert('Compras marcadas como PAGAS com sucesso!');
+        const { error } =
+          await supabaseClient
+            .from('transacoes')
+            .update({
+              Status: true
+            })
+            .in(
+              'id',
+              arrayIds
+            );
+
+        if (error) {
+
+          alert(
+            'Erro ao atualizar status: ' +
+            error.message
+          );
+
+        } else {
+
+          alert(
+            'Compras marcadas como PAGAS com sucesso!'
+          );
+
           idsSelecionados.clear();
+
           carregarDados();
         }
       }
     }
 
-    // DUPLICAR LANÇAMENTO
-    async function duplicarLancamento(t) {
-      if (confirm(`Duplicar o lançamento "${t.Descricao}"?`)) {
-        const { id, ...novoItem } = t;
-        novoItem.Descricao = `${novoItem.Descricao} (Cópia)`;
-        novoItem.Status = false;
 
-        const { error } = await supabaseClient.from('transacoes').insert([novoItem]);
-        if (error) alert('Erro ao duplicar: ' + error.message);
-        else carregarDados();
+    /* =====================================================
+       DUPLICAR
+       ===================================================== */
+
+    async function duplicarLancamento(t) {
+
+      if (
+        confirm(
+          `Duplicar o lançamento "${t.Descricao}"?`
+        )
+      ) {
+
+        const {
+          id,
+          ...novoItem
+        } = t;
+
+        novoItem.Descricao =
+          `${novoItem.Descricao} (Cópia)`;
+
+        novoItem.Status =
+          false;
+
+        const { error } =
+          await supabaseClient
+            .from('transacoes')
+            .insert([
+              novoItem
+            ]);
+
+        if (error) {
+
+          alert(
+            'Erro ao duplicar: ' +
+            error.message
+          );
+
+        } else {
+
+          carregarDados();
+        }
       }
     }
 
-    // MODAL EDITAR
+
+    /* =====================================================
+       MODAL EDITAR
+       ===================================================== */
+
     function abrirModalEdit(t) {
-      document.getElementById('edit-id').value = t.id;
-      document.getElementById('edit-tipo').value = t.Tipo || 'CARTAO';
-      document.getElementById('edit-descricao').value = t.Descricao;
-      document.getElementById('edit-valor').value = t.Valor;
-      document.getElementById('edit-data').value = t.Data;
-      document.getElementById('edit-vencimento').value = t.Vencimento;
-      document.getElementById('edit-cartao').value = t.Cartao;
-      document.getElementById('edit-status').value = t.Status ? "true" : "false";
-      document.getElementById('modal-editar').style.display = 'flex';
+
+      document.getElementById(
+        'edit-id'
+      ).value = t.id;
+
+      document.getElementById(
+        'edit-tipo'
+      ).value =
+        t.Tipo || 'CARTAO';
+
+      document.getElementById(
+        'edit-descricao'
+      ).value =
+        t.Descricao;
+
+      document.getElementById(
+        'edit-valor'
+      ).value =
+        t.Valor;
+
+      document.getElementById(
+        'edit-data'
+      ).value =
+        t.Data;
+
+      document.getElementById(
+        'edit-vencimento'
+      ).value =
+        t.Vencimento;
+
+      document.getElementById(
+        'edit-cartao'
+      ).value =
+        t.Cartao;
+
+      document.getElementById(
+        'edit-status'
+      ).value =
+        t.Status
+          ? "true"
+          : "false";
+
+      document.getElementById(
+        'modal-editar'
+      ).style.display =
+        'flex';
     }
+
 
     function fecharModalEdit() {
-      document.getElementById('modal-editar').style.display = 'none';
+
+      document.getElementById(
+        'modal-editar'
+      ).style.display =
+        'none';
     }
 
-    document.getElementById('form-editar').addEventListener('submit', async (e) => {
-      e.preventDefault();
-      const id = document.getElementById('edit-id').value;
-      const Tipo = document.getElementById('edit-tipo').value;
-      const Descricao = document.getElementById('edit-descricao').value;
-      const Valor = parseFloat(document.getElementById('edit-valor').value);
-      const Data = document.getElementById('edit-data').value;
-      const Vencimento = document.getElementById('edit-vencimento').value;
-      const Cartao = document.getElementById('edit-cartao').value;
-      const Status = document.getElementById('edit-status').value === "true";
 
-      const { error } = await supabaseClient
-        .from('transacoes')
-        .update({ Tipo, Descricao, Valor, Data, Vencimento, Cartao, Status })
-        .eq('id', id);
+    document
+      .getElementById('form-editar')
+      .addEventListener('submit', async (e) => {
 
-      if (error) alert('Erro ao atualizar: ' + error.message);
-      else {
-        alert('Lançamento atualizado!');
-        fecharModalEdit();
-        carregarDados();
-      }
-    });
+        e.preventDefault();
 
-    // EXCLUIR TRANSAÇÃO
+        const id =
+          document.getElementById(
+            'edit-id'
+          ).value;
+
+        const Tipo =
+          document.getElementById(
+            'edit-tipo'
+          ).value;
+
+        const Descricao =
+          document.getElementById(
+            'edit-descricao'
+          ).value;
+
+        const Valor =
+          parseFloat(
+            document.getElementById(
+              'edit-valor'
+            ).value
+          );
+
+        const Data =
+          document.getElementById(
+            'edit-data'
+          ).value;
+
+        const Vencimento =
+          document.getElementById(
+            'edit-vencimento'
+          ).value;
+
+        const Cartao =
+          document.getElementById(
+            'edit-cartao'
+          ).value;
+
+        const Status =
+          document.getElementById(
+            'edit-status'
+          ).value === "true";
+
+
+        const { error } =
+          await supabaseClient
+            .from('transacoes')
+            .update({
+              Tipo,
+              Descricao,
+              Valor,
+              Data,
+              Vencimento,
+              Cartao,
+              Status
+            })
+            .eq(
+              'id',
+              id
+            );
+
+
+        if (error) {
+
+          alert(
+            'Erro ao atualizar: ' +
+            error.message
+          );
+
+        } else {
+
+          alert(
+            'Lançamento atualizado!'
+          );
+
+          fecharModalEdit();
+
+          carregarDados();
+        }
+
+      });
+
+
+    /* =====================================================
+       EXCLUIR
+       ===================================================== */
+
     async function excluirTransacao(id) {
-      if (confirm('Tem certeza que deseja apagar essa parcela/lançamento?')) {
-        const { error } = await supabaseClient.from('transacoes').delete().eq('id', id);
-        if (error) alert('Erro ao excluir: ' + error.message);
-        else {
+
+      if (
+        confirm(
+          'Tem certeza que deseja apagar essa parcela/lançamento?'
+        )
+      ) {
+
+        const { error } =
+          await supabaseClient
+            .from('transacoes')
+            .delete()
+            .eq(
+              'id',
+              id
+            );
+
+        if (error) {
+
+          alert(
+            'Erro ao excluir: ' +
+            error.message
+          );
+
+        } else {
+
           idsSelecionados.delete(id);
+
           carregarDados();
         }
       }
     }
 
+
+    /* =====================================================
+       INICIALIZAÇÃO
+       ===================================================== */
+
+    alternarTipoForm();
+
+    atualizarBotoesPeriodo();
+
     carregarCartoes();
+
   </script>
+
 </body>
 </html>
