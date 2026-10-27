@@ -3186,7 +3186,7 @@
                   ? 'selected-row'
                   : ''
               }"
-              onclick="toggleSelectRow(event, ${t.id})">
+              onclick="toggleSelectRow(event, ${JSON.stringify(t.id)})">
 
               <td>
 
@@ -3199,7 +3199,7 @@
                   }
                   onclick="
                     event.stopPropagation();
-                    toggleSelectId(${t.id})
+                    toggleSelectId(${JSON.stringify(t.id)})
                   ">
 
               </td>
@@ -3278,13 +3278,13 @@
 
               </td>
 
-              <td
-                style="text-align:center;"
-                onclick="event.stopPropagation();">
+              <td style="text-align:center;">
 
                 <button
+                  type="button"
                   class="btn-edit"
-                  onclick='abrirModalEdit(${JSON.stringify(t)})'
+                  data-acao="editar"
+                  data-id="${t.id}"
                   title="Editar">
 
                   ✏️
@@ -3292,8 +3292,10 @@
                 </button>
 
                 <button
+                  type="button"
                   class="btn-clone"
-                  onclick='duplicarLancamento(${JSON.stringify(t)})'
+                  data-acao="duplicar"
+                  data-id="${t.id}"
                   title="Duplicar">
 
                   📋
@@ -3301,8 +3303,10 @@
                 </button>
 
                 <button
+                  type="button"
                   class="btn-delete"
-                  onclick="excluirTransacao(${t.id})"
+                  data-acao="excluir"
+                  data-id="${t.id}"
                   title="Excluir">
 
                   🗑️
@@ -3795,6 +3799,39 @@
         }
       }
     }
+
+
+    /* =====================================================
+       AÇÕES DOS BOTÕES DA TABELA
+       ===================================================== */
+
+    // Um único listener atende também às linhas recriadas pela tabela.
+    document.getElementById('tabela-corpo').addEventListener('click', async (event) => {
+      const botao = event.target.closest('button[data-acao]');
+      if (!botao) return;
+
+      event.preventDefault();
+      event.stopPropagation();
+
+      const acao = botao.dataset.acao;
+      const id = botao.dataset.id;
+      const transacao = dadosTransacoesCache.find(
+        item => String(item.id) === String(id)
+      );
+
+      if (!transacao) {
+        alert('Não foi possível localizar esse lançamento. Atualize a página e tente novamente.');
+        return;
+      }
+
+      if (acao === 'editar') {
+        abrirModalEdit(transacao);
+      } else if (acao === 'duplicar') {
+        await duplicarLancamento(transacao);
+      } else if (acao === 'excluir') {
+        await excluirTransacao(transacao.id);
+      }
+    });
 
 
     /* =====================================================
